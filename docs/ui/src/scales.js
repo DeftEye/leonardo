@@ -85,7 +85,7 @@ import {colorScaleDiverging} from './js/colorScaleDiverging';
 import {colorScaleSequential} from './js/colorScaleSequential';
 import {colorScaleQualitative} from './js/colorScaleQualitative';
 
-import toggleTooltip from './js/tooltip';
+import {toggleTooltip} from './js/tooltip';
 import {create3dModel} from './js/create3dModel';
 import {createSVGswatches, downloadSwatches} from './js/createSVGswatches';
 import {createXML, downloadXML} from './js/createXML';
