@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Leonardo × Adobe — Brand to Accessible UI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&family=IBM+Plex+Mono:wght@400;500&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet" />
+<style>
+:root {
+  --bg: #0f1218;
+  --panel: #171b24;
+  --line: #2a3140;
+  --text: #eef2f8;
+  --muted: #9aa6b8;
+  --ok: #3dd68c;
+  --bad: #ff6b7a;
+  --ease: cubic-bezier(.22,1,.36,1);
+  --accent: #1473e6;
+  --accent-text: #116ddd;
+  --surface: #f5f5f5;
+  --ink: #222;
+  --border: #afafaf;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: "Source Sans 3", "Segoe UI", sans-serif;
+  color: var(--text);
+  background:
+    radial-gradient(900px 500px at 15% -10%, color-mix(in srgb, var(--accent) 35%, transparent), transparent 60%),
+    radial-gradient(700px 420px at 90% 0%, rgba(255,120,90,.18), transparent 55%),
+    linear-gradient(180deg, #121722, #0b0e14 70%);
+}
+body.dark-stage { }
+.shell { max-width: 1180px; margin: 0 auto; padding: 28px 20px 64px; }
+.top { display: flex; justify-content: space-between; gap: 16px; align-items: end; flex-wrap: wrap; margin-bottom: 22px; }
+.eyebrow { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); font-weight: 700; margin-bottom: 8px; }
+h1 { font-family: "Source Serif 4", Georgia, serif; font-size: clamp(2rem, 4vw, 3.1rem); line-height: 1.05; margin: 0 0 8px; letter-spacing: -.03em; }
+.sub { color: var(--muted); max-width: 52ch; margin: 0; }
+.controls { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.chip, .toggle {
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.03);
+  color: var(--text);
+  border-radius: 999px;
+  padding: 10px 14px;
+  font: inherit;
+  cursor: pointer;
+  transition: transform .25s var(--ease), background .25s, border-color .25s, box-shadow .25s;
+}
+.chip:hover, .toggle:hover { transform: translateY(-1px); border-color: color-mix(in srgb, var(--accent) 60%, var(--line)); }
+.chip.active {
+  background: color-mix(in srgb, var(--accent) 22%, transparent);
+  border-color: color-mix(in srgb, var(--accent) 70%, var(--line));
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 35%, transparent);
+}
+.toggle.primary { background: var(--accent); border-color: transparent; color: white; font-weight: 700; }
+.layout { display: grid; grid-template-columns: 1.35fr .9fr; gap: 18px; }
+@media (max-width: 920px) { .layout { grid-template-columns: 1fr; } }
+.stage {
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  overflow: hidden;
+  background: var(--panel);
+  box-shadow: 0 30px 80px rgba(0,0,0,.35);
+  position: relative;
+}
+.stage::after {
+  content: "";
+  position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(120deg, transparent 30%, rgba(255,255,255,.05) 48%, transparent 62%);
+  transform: translateX(-120%);
+  animation: sheen 4.8s var(--ease) infinite;
+}
+@keyframes sheen { 0%, 65% { transform: translateX(-120%); } 100% { transform: translateX(120%); } }
+.app {
+  background: var(--surface);
+  color: var(--ink);
+  transition: background .55s var(--ease), color .55s var(--ease);
+  min-height: 540px;
+}
+.nav {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid color-mix(in srgb, var(--border) 70%, transparent);
+}
+.brand { display: flex; gap: 10px; align-items: center; font-weight: 700; }
+.logo {
+  width: 28px; height: 28px; border-radius: 8px;
+  background: linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent) 40%, black));
+  box-shadow: 0 8px 18px color-mix(in srgb, var(--accent) 35%, transparent);
+  transition: background .45s var(--ease), box-shadow .45s var(--ease);
+}
+.nav-actions { display: flex; gap: 8px; }
+.btn {
+  border: 0; border-radius: 8px; padding: 9px 14px; font: inherit; cursor: pointer;
+  transition: transform .2s var(--ease), background .35s, color .35s, box-shadow .35s;
+}
+.btn:hover { transform: translateY(-1px); }
+.btn-ghost {
+  background: transparent; color: var(--ink);
+  border: 1px solid color-mix(in srgb, var(--border) 80%, transparent);
+}
+.btn-primary {
+  background: var(--accent-text);
+  color: #fff;
+  box-shadow: 0 10px 24px color-mix(in srgb, var(--accent-text) 35%, transparent);
+}
+.hero { padding: 34px 28px 18px; display: grid; grid-template-columns: 1.2fr .8fr; gap: 18px; }
+@media (max-width: 720px) { .hero { grid-template-columns: 1fr; } }
+.hero h2 {
+  font-family: "Source Serif 4", Georgia, serif;
+  font-size: clamp(1.7rem, 3vw, 2.35rem);
+  margin: 0 0 10px; letter-spacing: -.02em;
+  transition: color .45s var(--ease);
+}
+.hero p { margin: 0 0 18px; color: color-mix(in srgb, var(--ink) 72%, transparent); max-width: 36ch; }
+.badge-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+.a11y {
+  font-size: 12px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase;
+  padding: 6px 10px; border-radius: 999px;
+  background: color-mix(in srgb, var(--ok) 18%, var(--surface));
+  color: color-mix(in srgb, var(--ok) 70%, var(--ink));
+  border: 1px solid color-mix(in srgb, var(--ok) 35%, transparent);
+}
+.a11y.bad {
+  background: color-mix(in srgb, var(--bad) 16%, var(--surface));
+  color: color-mix(in srgb, var(--bad) 75%, var(--ink));
+  border-color: color-mix(in srgb, var(--bad) 40%, transparent);
+}
+.card {
+  border: 1px solid color-mix(in srgb, var(--border) 80%, transparent);
+  border-radius: 16px; padding: 16px;
+  background: color-mix(in srgb, var(--surface) 88%, white);
+  transition: border-color .45s, background .45s, transform .45s var(--ease);
+}
+body.dark-stage .card { background: color-mix(in srgb, var(--surface) 86%, black); }
+.card:hover { transform: translateY(-3px); }
+.card h3 { margin: 0 0 6px; font-size: 1rem; }
+.card p { margin: 0; font-size: 14px; color: color-mix(in srgb, var(--ink) 70%, transparent); }
+.swatch-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; padding: 0 28px 28px; }
+.sw {
+  border-radius: 12px; min-height: 74px; padding: 10px;
+  display: flex; flex-direction: column; justify-content: end;
+  border: 1px solid rgba(0,0,0,.08);
+  transition: background .45s var(--ease), color .45s, transform .35s var(--ease);
+  font-size: 11px;
+}
+.sw strong { font-size: 12px; }
+.side { display: grid; gap: 14px; }
+.panel {
+  background: rgba(255,255,255,.03);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+}
+.panel h3 { margin: 0 0 8px; font-size: 14px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.metric {
+  display: flex; justify-content: space-between; align-items: baseline;
+  padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,.06);
+}
+.metric:last-child { border-bottom: 0; }
+.metric b { font-family: "IBM Plex Mono", monospace; font-size: 13px; }
+.diff {
+  font-family: "IBM Plex Mono", monospace; font-size: 11.5px; line-height: 1.5;
+  white-space: pre-wrap; color: #d7deea; max-height: 230px; overflow: auto;
+}
+.add { color: #8dffa8; }
+.del { color: #ff9b9b; }
+.meta { color: #9ec1ff; }
+.pulse { animation: pulse .7s var(--ease); }
+@keyframes pulse {
+  0% { filter: saturate(1); transform: scale(1); }
+  40% { filter: saturate(1.35); transform: scale(1.01); }
+  100% { filter: saturate(1); transform: scale(1); }
+}
+.statusbar {
+  position: absolute; left: 20px; bottom: 16px;
+  font-size: 12px; color: var(--muted);
+  background: rgba(0,0,0,.35); backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 999px; padding: 6px 10px;
+  z-index: 2;
+}
+.hint { color: var(--muted); font-size: 13px; margin: 0 0 10px; }
+</style>
+</head>
+<body>
+  <div class="shell">
+    <div class="top">
+      <div>
+        <div class="eyebrow">Leonardo MCP · Adobe demo</div>
+        <h1>Brand hex in.<br/>Accessible Spectrum UI out.</h1>
+        <p class="sub">One agent call. Shared ratios for light/dark. Broken tokens repaired into a PR-ready diff.</p>
+      </div>
+      <div class="controls">
+        <button class="chip active" data-preset="adobeBlue">Adobe Blue</button>
+        <button class="chip" data-preset="spectrumCoral">Coral Pulse</button>
+        <button class="chip" data-preset="forest">Forest</button>
+        <button class="toggle" id="modeBtn">Toggle dark</button>
+        <button class="toggle primary" id="fixBtn">Audit &amp; fix</button>
+      </div>
+    </div>
+
+    <div class="layout">
+      <div class="stage">
+        <div class="app" id="app">
+          <div class="nav">
+            <div class="brand"><div class="logo"></div><span id="brandName">Adobe Blue</span></div>
+            <div class="nav-actions">
+              <button class="btn btn-ghost">Secondary</button>
+              <button class="btn btn-primary">Create theme</button>
+            </div>
+          </div>
+          <div class="hero">
+            <div>
+              <div class="badge-row">
+                <span class="a11y" id="aaBadge">AA text 4.5:1</span>
+                <span class="a11y" id="pairBadge">Shared ratios · light/dark</span>
+              </div>
+              <h2 id="headline">Design systems that stay accessible when the brand changes.</h2>
+              <p>This mock UI is driven by Leonardo tokens — not hand-picked hex. Switch brands or modes and every role keeps its contrast target.</p>
+              <button class="btn btn-primary">Launch accessible palette</button>
+            </div>
+            <div class="card">
+              <h3>Spectrum-safe roles</h3>
+              <p>border 2 · icon/largeText 3 · text 4.5. Same names in both modes; only values move with lightness.</p>
+            </div>
+          </div>
+          <div class="swatch-strip" id="swatches"></div>
+        </div>
+        <div class="statusbar" id="status">Ready · generate-spectrum-theme</div>
+      </div>
+
+      <div class="side">
+        <div class="panel">
+          <h3>Live tokens</h3>
+          <div id="metrics"></div>
+        </div>
+        <div class="panel">
+          <h3>Audit → PR diff</h3>
+          <p class="hint" id="diffHint">Click “Audit &amp; fix” to repair weak legacy tokens.</p>
+          <div class="diff" id="diff"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+const PRESETS = {"adobeBlue":{"label":"Adobe Blue","primary":"blue","light":{"background":"#f5f5f5","gray--border":"#afafaf","gray--largeText":"#8e8e8e","gray--icon":"#8e8e8e","gray--text":"#707070","blue--border":"#00bcfd","blue--largeText":"#0092f5","blue--icon":"#0092f5","blue--text":"#116ddd","red--border":"#fd937c","red--largeText":"#eb615b","red--icon":"#eb615b","red--text":"#d92727"},"dark":{"background":"#232323","gray--border":"#525252","gray--largeText":"#6c6c6c","gray--icon":"#6c6c6c","gray--text":"#898989","blue--border":"#004cb1","blue--largeText":"#0f69d6","blue--icon":"#0f69d6","blue--text":"#008bf2","red--border":"#a90000","red--largeText":"#d51c19","red--icon":"#d51c19","red--text":"#e95957"},"audit":{"summary":{"total":3,"passed":1,"failed":2,"level":"AA","background":"#f5f5f5"},"failures":[{"name":"blue-text","value":"#A8C4F0","role":"text","currentRatio":1.63,"targetRatio":4.5,"passes":false},{"name":"gray-text","value":"#9A9A9A","role":"text","currentRatio":2.58,"targetRatio":4.5,"passes":false}],"fixes":[{"name":"blue-text","role":"text","currentRatio":1.63,"targetRatio":4.5,"currentValue":"#A8C4F0","suggestedValue":"#116ddd","reason":"Re-solved text token to 4.5:1 using provided brand keys."},{"name":"gray-text","role":"text","currentRatio":2.58,"targetRatio":4.5,"currentValue":"#9A9A9A","suggestedValue":"#707070","reason":"Re-solved text token to 4.5:1 using provided brand keys."}],"diff":"--- a/theme.css\n+++ b/theme.css\n@@ -1,6 +1,6 @@\n .adobeBlue {\n   --background: #f5f5f5;\n-  --blue-text: #A8C4F0;\n+  --blue-text: #116ddd;\n   --blue-border: #00bcfd;\n-  --gray-text: #9A9A9A;\n+  --gray-text: #707070;\n }\n"}},"spectrumCoral":{"label":"Coral Pulse","primary":"coral","light":{"background":"#f5f5f5","gray--border":"#afafaf","gray--largeText":"#8e8e8e","gray--icon":"#8e8e8e","gray--text":"#707070","coral--border":"#fc937b","coral--largeText":"#f35c45","coral--icon":"#f35c45","coral--text":"#d13723","ink--border":"#a9b0bc","ink--largeText":"#888e9a","ink--icon":"#888e9a","ink--text":"#6b717b"},"dark":{"background":"#232323","gray--border":"#525252","gray--largeText":"#6c6c6c","gray--icon":"#6c6c6c","gray--text":"#898989","coral--border":"#a90000","coral--largeText":"#cc311e","coral--icon":"#cc311e","coral--text":"#f0533e","ink--border":"#4d525c","ink--largeText":"#676c77","ink--icon":"#676c77","ink--text":"#838a95"},"audit":{"summary":{"total":3,"passed":1,"failed":2,"level":"AA","background":"#f5f5f5"},"failures":[{"name":"coral-text","value":"#A8C4F0","role":"text","currentRatio":1.63,"targetRatio":4.5,"passes":false},{"name":"gray-text","value":"#9A9A9A","role":"text","currentRatio":2.58,"targetRatio":4.5,"passes":false}],"fixes":[{"name":"coral-text","role":"text","currentRatio":1.63,"targetRatio":4.5,"currentValue":"#A8C4F0","suggestedValue":"#d13723","reason":"Re-solved text token to 4.5:1 using provided brand keys."},{"name":"gray-text","role":"text","currentRatio":2.58,"targetRatio":4.5,"currentValue":"#9A9A9A","suggestedValue":"#707070","reason":"Re-solved text token to 4.5:1 using provided brand keys."}],"diff":"--- a/theme.css\n+++ b/theme.css\n@@ -1,6 +1,6 @@\n .spectrumCoral {\n   --background: #f5f5f5;\n-  --coral-text: #A8C4F0;\n+  --coral-text: #d13723;\n   --coral-border: #fc937b;\n-  --gray-text: #9A9A9A;\n+  --gray-text: #707070;\n }\n"}},"forest":{"label":"Forest","primary":"green","light":{"background":"#f5f5f5","gray--border":"#afafaf","gray--largeText":"#8e8e8e","gray--icon":"#8e8e8e","gray--text":"#707070","green--border":"#67c191","green--largeText":"#30a070","green--icon":"#30a070","green--text":"#1b8056","gold--border":"#dba745","gold--largeText":"#b88529","gold--icon":"#b88529","gold--text":"#98670e"},"dark":{"background":"#232323","gray--border":"#525252","gray--largeText":"#6c6c6c","gray--icon":"#6c6c6c","gray--text":"#898989","green--border":"#005f3a","green--largeText":"#177b52","green--icon":"#177b52","green--text":"#2b9b6c","gold--border":"#754800","gold--largeText":"#936209","gold--icon":"#936209","gold--text":"#b38024"},"audit":{"summary":{"total":3,"passed":1,"failed":2,"level":"AA","background":"#f5f5f5"},"failures":[{"name":"green-text","value":"#A8C4F0","role":"text","currentRatio":1.63,"targetRatio":4.5,"passes":false},{"name":"gray-text","value":"#9A9A9A","role":"text","currentRatio":2.58,"targetRatio":4.5,"passes":false}],"fixes":[{"name":"green-text","role":"text","currentRatio":1.63,"targetRatio":4.5,"currentValue":"#A8C4F0","suggestedValue":"#1b8056","reason":"Re-solved text token to 4.5:1 using provided brand keys."},{"name":"gray-text","role":"text","currentRatio":2.58,"targetRatio":4.5,"currentValue":"#9A9A9A","suggestedValue":"#707070","reason":"Re-solved text token to 4.5:1 using provided brand keys."}],"diff":"--- a/theme.css\n+++ b/theme.css\n@@ -1,6 +1,6 @@\n .forest {\n   --background: #f5f5f5;\n-  --green-text: #A8C4F0;\n+  --green-text: #1b8056;\n   --green-border: #67c191;\n-  --gray-text: #9A9A9A;\n+  --gray-text: #707070;\n }\n"}}};
+let presetId = 'adobeBlue';
+let mode = 'light';
+let broken = false;
+
+function inkFor(bg) {
+  const h = String(bg || '#000').replace('#','');
+  if (h.length < 6) return '#fff';
+  const r = parseInt(h.slice(0,2),16), g = parseInt(h.slice(2,4),16), b = parseInt(h.slice(4,6),16);
+  return (0.2126*r + 0.7152*g + 0.0722*b) / 255 > 0.55 ? '#1d1a16' : '#f4f1ec';
+}
+
+function apply() {
+  const p = PRESETS[presetId];
+  const pairs = p[mode];
+  const primary = p.primary;
+  const accent = pairs[primary + '--icon'] || pairs[primary + '--text'];
+  const accentText = pairs[primary + '--text'];
+  const border = pairs[primary + '--border'] || pairs['gray--border'];
+  const surface = pairs.background;
+  const ink = pairs['gray--text'] || inkFor(surface);
+
+  document.body.style.setProperty('--accent', accent);
+  document.body.style.setProperty('--accent-text', broken ? '#A8C4F0' : accentText);
+  document.body.style.setProperty('--surface', surface);
+  document.body.style.setProperty('--ink', ink);
+  document.body.style.setProperty('--border', border);
+  document.body.classList.toggle('dark-stage', mode === 'dark');
+
+  document.getElementById('brandName').textContent = p.label;
+  document.getElementById('headline').style.color = broken ? '#A8C4F0' : accentText;
+  document.getElementById('aaBadge').textContent = broken ? 'FAIL text 1.9:1' : 'AA text 4.5:1';
+  document.getElementById('aaBadge').classList.toggle('bad', broken);
+  document.getElementById('pairBadge').textContent = mode === 'light' ? 'Light · shared ratios' : 'Dark · shared ratios';
+
+  const keys = [primary+'--border', primary+'--icon', primary+'--text', 'gray--text'];
+  document.getElementById('swatches').innerHTML = keys.map((k) => {
+    const c = (broken && k.endsWith('--text') && k.startsWith(primary)) ? '#A8C4F0' : pairs[k];
+    return '<div class="sw" style="background:'+c+';color:'+inkFor(c)+'"><strong>'+k.replace('--',' · ')+'</strong><span>'+c+'</span></div>';
+  }).join('');
+
+  const metrics = [
+    ['background', pairs.background],
+    [primary+'--text', broken ? '#A8C4F0' : pairs[primary+'--text']],
+    [primary+'--icon', pairs[primary+'--icon']],
+    ['gray--text', pairs['gray--text']],
+    ['mode', mode],
+    ['level', 'AA']
+  ];
+  document.getElementById('metrics').innerHTML = metrics.map(([k,v]) =>
+    '<div class="metric"><span>'+k+'</span><b>'+v+'</b></div>'
+  ).join('');
+
+  const app = document.getElementById('app');
+  app.classList.remove('pulse');
+  void app.offsetWidth;
+  app.classList.add('pulse');
+}
+
+function showDiff(css) {
+  const el = document.getElementById('diff');
+  const hint = document.getElementById('diffHint');
+  if (!css) {
+    hint.textContent = 'No diff available for this preset.';
+    el.textContent = '';
+    return;
+  }
+  hint.textContent = 'Unified diff from audit-token-set — paste into a PR.';
+  el.innerHTML = css.split('\n').map((line) => {
+    const safe = line.replace(/&/g,'&amp;').replace(/</g,'&lt;');
+    if (line.startsWith('+') && !line.startsWith('+++')) return '<span class="add">'+safe+'</span>';
+    if (line.startsWith('-') && !line.startsWith('---')) return '<span class="del">'+safe+'</span>';
+    if (line.startsWith('@@') || line.startsWith('---') || line.startsWith('+++')) return '<span class="meta">'+safe+'</span>';
+    return safe;
+  }).join('\n');
+}
+
+document.querySelectorAll('[data-preset]').forEach((btn) => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('[data-preset]').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    presetId = btn.dataset.preset;
+    broken = false;
+    document.getElementById('status').textContent = 'generate-spectrum-theme · ' + PRESETS[presetId].label;
+    document.getElementById('diffHint').textContent = 'Click “Audit & fix” to repair weak legacy tokens.';
+    document.getElementById('diff').textContent = '';
+    apply();
+  });
+});
+
+document.getElementById('modeBtn').addEventListener('click', () => {
+  mode = mode === 'light' ? 'dark' : 'light';
+  document.getElementById('modeBtn').textContent = mode === 'light' ? 'Toggle dark' : 'Toggle light';
+  document.getElementById('status').textContent = 'generate-theme-pair · shared ratios · ' + mode;
+  apply();
+});
+
+document.getElementById('fixBtn').addEventListener('click', async () => {
+  const p = PRESETS[presetId];
+  broken = true;
+  apply();
+  document.getElementById('status').textContent = 'audit-token-set · found ' + p.audit.summary.failed + ' AA failures…';
+  document.getElementById('diffHint').textContent = 'Scanning legacy tokens…';
+  document.getElementById('diff').textContent = '';
+  await new Promise(r => setTimeout(r, 750));
+  broken = false;
+  apply();
+  showDiff(p.audit.diff);
+  document.getElementById('status').textContent = 'audit-token-set · fixed ' + p.audit.fixes.length + ' tokens · PR-ready diff';
+});
+
+apply();
+</script>
+</body>
+</html>
