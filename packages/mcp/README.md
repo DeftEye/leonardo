@@ -4,7 +4,7 @@
 [![license](https://img.shields.io/github/license/adobe/leonardo)](https://github.com/adobe/leonardo/blob/master/LICENSE)
 [![Pull requests welcome](https://img.shields.io/badge/PRs-welcome-blueviolet)](https://github.com/adobe/leonardo/blob/master/.github/CONTRIBUTING.md)
 
-An [MCP](https://modelcontextprotocol.io/) (Model Context Protocol) server that exposes [@adobe/leonardo-contrast-colors](https://www.npmjs.com/package/@adobe/leonardo-contrast-colors) as tools. Use it from Cursor, Claude Desktop, or any MCP client to generate contrast-based themes, check WCAG contrast, convert colors, and create palettes without writing code.
+An [MCP](https://modelcontextprotocol.io/) (Model Context Protocol) server that exposes [@adobe/leonardo-contrast-colors](https://www.npmjs.com/package/@adobe/leonardo-contrast-colors) as tools for Adobe design-system workflows. Use it from Cursor, Claude Desktop, or any MCP client to generate Spectrum-safe themes, audit token sets, produce light/dark pairs with shared ratios, emit CSS/DTCG tokens and PR-ready diffs, check WCAG contrast, convert colors, and create palettes.
 
 ## Quick start
 
@@ -25,9 +25,48 @@ The server runs over stdio. Configure your MCP client to start this command; see
 
 ## Tools
 
+### `generate-spectrum-theme`
+
+Generate a Spectrum-oriented Adobe UI theme from brand hex keys + AA/AAA targets. Uses semantic ratios (`--border`, `--largeText`, `--icon`, `--text`, and `--textHigh` for AAA) in LCH, and returns light/dark modes with CSS variables, DTCG-style tokens, and optional unified diffs.
+
+| Parameter     | Type   | Required | Description                                             |
+| ------------- | ------ | -------- | ------------------------------------------------------- |
+| `brandColors` | array  | yes      | `{ name, colorKeys[], colorspace? }` brand scales.      |
+| `neutralKeys` | array  | no       | Neutral keys (default `["#cacaca", "#000000"]`).        |
+| `neutralName` | string | no       | Neutral scale name (default `gray`).                    |
+| `level`       | string | no       | `AA` (default) or `AAA`.                                |
+| `modes`       | object | no       | `{ light?: 97, dark?: 15 }` lightness snapshots.        |
+| `formula`     | string | no       | `wcag2` (default) or `wcag3`.                           |
+| `themeName`   | string | no       | Prefix for CSS/DTCG export names.                       |
+| `baseline`    | object | no       | `{ css?, tokens? }` previous exports for unified diffs. |
+
+### `audit-token-set`
+
+Audit a flat or DTCG-ish color token set against a background and AA/AAA role thresholds. Returns pass/fail results, suggested ratio/value fixes (when `recolor` brand keys are provided), fixed CSS/DTCG output, and PR-ready diffs.
+
+| Parameter    | Type   | Required | Description                                                            |
+| ------------ | ------ | -------- | ---------------------------------------------------------------------- |
+| `background` | string | yes      | Background color to audit against.                                     |
+| `tokens`     | object | yes      | Flat `{ name: color }` or nested DTCG-ish (`$value` / `$type`) tokens. |
+| `level`      | string | no       | `AA` (default) or `AAA`.                                               |
+| `roles`      | object | no       | Map token name → `border` \| `largeText` \| `icon` \| `text`.          |
+| `recolor`    | array  | no       | Brand `{ colorKeys[] }` used to re-solve failing tokens.               |
+| `baseline`   | object | no       | Optional previous CSS/tokens; defaults to original set for fix diffs.  |
+
+### `generate-theme-pair`
+
+Generate light and dark snapshots from the same Leonardo color definitions and shared ratios.
+
+| Parameter         | Type   | Required | Description                                               |
+| ----------------- | ------ | -------- | --------------------------------------------------------- |
+| `colors`          | array  | yes      | Leonardo color definitions.                               |
+| `backgroundColor` | object | yes      | Background color definition.                              |
+| `modes`           | object | yes      | `{ light, dark }` lightness values (0–100).               |
+| `baseline`        | object | no       | `{ css?, tokens? }` for unified diffs against light mode. |
+
 ### `generate-theme`
 
-Generate a contrast-based color theme. Returns `theme.contrastColors`-style JSON ready for design tokens or CSS variables.
+Generate a contrast-based color theme. Returns `{ contrastColors, contrastColorPairs, css, tokens }`.
 
 | Parameter         | Type   | Required | Description                                                               |
 | ----------------- | ------ | -------- | ------------------------------------------------------------------------- |
@@ -38,6 +77,7 @@ Generate a contrast-based color theme. Returns `theme.contrastColors`-style JSON
 | `saturation`      | number | no       | 0–100 (default `100`).                                                    |
 | `output`          | string | no       | Output format: `HEX`, `RGB`, `HSL`, `LCH`, etc. (default `HEX`).          |
 | `formula`         | string | no       | `wcag2` (default) or `wcag3` (APCA).                                      |
+| `themeName`       | string | no       | CSS selector / DTCG group name.                                           |
 
 Example input:
 

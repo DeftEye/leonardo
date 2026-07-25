@@ -18,11 +18,12 @@ import {createScale} from '@adobe/leonardo-contrast-colors';
  */
 export function createPalette(args) {
   try {
-    const {colorKeys, colorspace = 'LAB', steps, smooth = false, shift = 1, fullScale = true, distributeLightness = 'linear', sortColor = true} = args;
+    const {colorKeys, steps, smooth = false, shift = 1, fullScale = true, distributeLightness = 'linear', sortColor = true} = args;
+    const colorSpace = args.colorSpace || args.colorspace || 'LAB';
     const colors = createScale({
       swatches: steps,
       colorKeys,
-      colorSpace: colorspace,
+      colorSpace,
       smooth,
       shift,
       fullScale,

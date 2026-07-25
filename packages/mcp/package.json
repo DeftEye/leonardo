@@ -1,7 +1,7 @@
 {
   "name": "@adobe/leonardo-mcp",
-  "version": "0.1.0",
-  "description": "MCP server for @adobe/leonardo-contrast-colors — generate themes, check contrast, convert colors",
+  "version": "0.2.0",
+  "description": "MCP server for @adobe/leonardo-contrast-colors — Spectrum-safe themes, token audits, light/dark pairs, contrast tools",
   "type": "module",
   "main": "./src/server.js",
   "bin": {

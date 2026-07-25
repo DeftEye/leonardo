@@ -10,32 +10,28 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import {buildTheme} from '../lib/buildTheme.js';
-import {exportThemeFormats} from '../lib/formatTokens.js';
+import {generateThemePair as generateThemePairLib} from '../lib/themePair.js';
 
 /**
  * @param {{
  *   colors: Array<{ name: string, colorKeys: string[], ratios: number[] | Record<string, number>, colorspace?: string }>;
  *   backgroundColor: { name: string, colorKeys: string[], ratios: number[] | Record<string, number>, colorspace?: string };
- *   lightness: number;
+ *   modes: { light: number, dark: number };
  *   contrast?: number;
  *   saturation?: number;
  *   output?: string;
  *   formula?: 'wcag2' | 'wcag3';
  *   themeName?: string;
+ *   baseline?: { css?: string | object, tokens?: string | object };
  * }} args
- * @returns {{
- *   contrastColors: import('@adobe/leonardo-contrast-colors').Theme['contrastColors'];
- *   contrastColorPairs: Record<string, string>;
- *   css: string;
- *   tokens: Record<string, unknown>;
- * }}
  */
-export function generateTheme(args) {
+export function generateThemePair(args) {
   try {
-    const theme = buildTheme(args);
-    return exportThemeFormats(theme, {themeName: args.themeName || ''});
+    if (!args.modes || typeof args.modes.light !== 'number' || typeof args.modes.dark !== 'number') {
+      throw new Error('modes.light and modes.dark are required (0–100)');
+    }
+    return generateThemePairLib(args);
   } catch (err) {
-    throw new Error(`Failed to generate theme: ${err.message}`);
+    throw new Error(`Failed to generate theme pair: ${err.message}`);
   }
 }

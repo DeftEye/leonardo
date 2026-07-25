@@ -1,11 +1,14 @@
 ---
 name: leonardo-colors
-description: Generate accessible color themes using @adobe/leonardo-contrast-colors. Use when the user needs help building contrast-based color palettes, checking WCAG accessibility, creating adaptive themes, or using the Leonardo API.
+description: Generate accessible color themes using @adobe/leonardo-contrast-colors and @adobe/leonardo-mcp. Use when the user needs Spectrum-safe themes from brand hex, token-set audits with ratio fixes, light/dark pairs, WCAG accessibility, adaptive themes, CSS/DTCG token diffs, or the Leonardo API.
 ---
 
 # Leonardo Contrast Colors — Agent Skill
 
-When helping users with **@adobe/leonardo-contrast-colors**, follow these steps. For full API details (parameters, types, setters), load `references/api.md` on demand.
+When helping users with **@adobe/leonardo-contrast-colors** or **@adobe/leonardo-mcp**, follow these steps.
+
+- For **Adobe / Spectrum / token / PR workflows**, load `references/adobe-workflows.md` first and prefer MCP tools (`generate-spectrum-theme`, `audit-token-set`, `generate-theme-pair`).
+- For full API details (parameters, types, setters), load `references/api.md` on demand.
 
 ## 1. Installation
 
@@ -142,6 +145,19 @@ LCH, LAB, RGB, HSL, HSV, HSLuv, CAM02, CAM02p, OKLAB, OKLCH.
 HEX, RGB, HSL, HSV, HSLuv, LAB, LCH, CAM02, CAM02p, OKLAB, OKLCH.
 
 Values follow W3C CSS Color Module Level 4 (e.g. `lch(100% 0 360deg)`, `rgb(255 255 255)`).
+
+## 9. Adobe MCP workflows (preferred for agents)
+
+When `@adobe/leonardo-mcp` is available, prefer these tools over hand-writing Theme constructors:
+
+| Goal | Tool |
+|------|------|
+| Spectrum-safe theme from brand hex + AA/AAA | `generate-spectrum-theme` |
+| Audit tokens and propose ratio/value fixes | `audit-token-set` |
+| Light/dark pairings with shared ratios | `generate-theme-pair` (or spectrum tool modes) |
+| One-shot theme + CSS/DTCG export | `generate-theme` → `{ contrastColors, contrastColorPairs, css, tokens }` |
+
+Details, example payloads, and how to turn `diff.css` / `diff.tokens` into a PR: **references/adobe-workflows.md**.
 
 ---
 

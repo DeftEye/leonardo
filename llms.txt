@@ -14,7 +14,9 @@ License: Apache-2.0
 ## Monorepo structure
 
 - packages/contrast-colors/ — @adobe/leonardo-contrast-colors (core library; the main API described below)
+- packages/mcp/ — @adobe/leonardo-mcp (MCP server for agents: Spectrum-safe themes, token audit, light/dark pairs, CSS/DTCG diffs)
 - docs/ui/ — @adobe/leonardo-ui (Vite web app for leonardocolor.io)
+- skills/leonardo-colors/ — Agent skill for Leonardo + Adobe token workflows
 
 ## Public API (@adobe/leonardo-contrast-colors)
 
@@ -81,3 +83,11 @@ const pairs = theme.contrastColorPairs;  // { gray100: '#...', blue100: '#...', 
 
 - ratios can be an array of numbers (e.g. [3, 4.5, 7]) or an object mapping names to ratios (e.g. { 'blue--largeText': 3, 'blue--normalText': 4.5 }).
 - Positive ratios (e.g. 4.5) produce darker text on a light background; negative ratios produce lighter text on a dark background.
+
+## MCP Adobe workflows (@adobe/leonardo-mcp)
+
+- generate-spectrum-theme — brand hex + AA/AAA → Spectrum-oriented semantic ratios, light/dark modes, CSS + DTCG tokens, optional unified diffs
+- audit-token-set — audit flat/DTCG tokens vs background; propose ratio/value fixes; emit PR-ready diffs
+- generate-theme-pair — shared color defs + ratios at light and dark lightness
+- generate-theme — returns contrastColors, contrastColorPairs, css, tokens
+- check-contrast / convert-color / create-palette — low-level helpers

@@ -18,6 +18,9 @@ import {generateTheme} from './tools/generate-theme.js';
 import {checkContrast} from './tools/check-contrast.js';
 import {convertColor} from './tools/convert-color.js';
 import {createPalette} from './tools/create-palette.js';
+import {generateSpectrumTheme} from './tools/generate-spectrum-theme.js';
+import {auditTokenSet} from './tools/audit-token-set.js';
+import {generateThemePair} from './tools/generate-theme-pair.js';
 
 const pkg = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'));
 
@@ -26,20 +29,48 @@ const server = new McpServer({
   version: pkg.version
 });
 
+const colorSpaceSchema = z.enum(['LCH', 'LAB', 'RGB', 'HSL', 'HSV', 'HSLuv', 'CAM02', 'CAM02p', 'OKLAB', 'OKLCH']);
+
 const colorDefSchema = z.object({
   name: z.string(),
   colorKeys: z.array(z.string()),
   ratios: z.union([z.array(z.number()), z.record(z.string(), z.number())]),
-  colorspace: z.enum(['LCH', 'LAB', 'RGB', 'HSL', 'HSV', 'HSLuv', 'CAM02', 'CAM02p', 'OKLAB', 'OKLCH']).optional()
+  colorSpace: colorSpaceSchema.optional(),
+  colorspace: colorSpaceSchema.optional()
+});
+
+const brandColorSchema = z.object({
+  name: z.string(),
+  colorKeys: z.array(z.string()),
+  colorSpace: colorSpaceSchema.optional(),
+  colorspace: colorSpaceSchema.optional()
 });
 
 const outputFormatSchema = z.enum(['HEX', 'RGB', 'HSL', 'HSV', 'HSLuv', 'LAB', 'LCH', 'OKLAB', 'OKLCH', 'CAM02', 'CAM02p']);
+
+const baselineSchema = z
+  .object({
+    css: z.union([z.string(), z.record(z.unknown())]).optional(),
+    tokens: z.union([z.string(), z.record(z.unknown())]).optional()
+  })
+  .optional();
+
+function toolResult(result) {
+  return {
+    content: [{type: 'text', text: JSON.stringify(result, null, 2)}],
+    structuredContent: result
+  };
+}
+
+function toolError(err) {
+  return {content: [{type: 'text', text: err.message}], isError: true};
+}
 
 server.registerTool(
   'generate-theme',
   {
     title: 'Generate theme',
-    description: 'Generate a contrast-based color theme. Returns theme.contrastColors JSON ready for design tokens.',
+    description: 'Generate a contrast-based color theme. Returns contrastColors, contrastColorPairs, CSS custom properties, and DTCG-style design tokens.',
     inputSchema: z.object({
       colors: z.array(colorDefSchema),
       backgroundColor: colorDefSchema,
@@ -47,18 +78,110 @@ server.registerTool(
       contrast: z.number().optional(),
       saturation: z.number().min(0).max(100).optional(),
       output: outputFormatSchema.optional(),
-      formula: z.enum(['wcag2', 'wcag3']).optional()
+      formula: z.enum(['wcag2', 'wcag3']).optional(),
+      themeName: z.string().optional()
     })
   },
   async (args) => {
     try {
-      const result = generateTheme(args);
-      return {
-        content: [{type: 'text', text: JSON.stringify(result, null, 2)}],
-        structuredContent: result
-      };
+      return toolResult(generateTheme(args));
     } catch (err) {
-      return {content: [{type: 'text', text: err.message}], isError: true};
+      return toolError(err);
+    }
+  }
+);
+
+server.registerTool(
+  'generate-theme-pair',
+  {
+    title: 'Generate light/dark theme pair',
+    description: 'Generate light and dark theme snapshots from the same Leonardo color definitions and shared ratios. Returns CSS and DTCG tokens for each mode, plus optional unified diffs against a baseline.',
+    inputSchema: z.object({
+      colors: z.array(colorDefSchema),
+      backgroundColor: colorDefSchema,
+      modes: z.object({
+        light: z.number().min(0).max(100),
+        dark: z.number().min(0).max(100)
+      }),
+      contrast: z.number().optional(),
+      saturation: z.number().min(0).max(100).optional(),
+      output: outputFormatSchema.optional(),
+      formula: z.enum(['wcag2', 'wcag3']).optional(),
+      themeName: z.string().optional(),
+      baseline: baselineSchema
+    })
+  },
+  async (args) => {
+    try {
+      return toolResult(generateThemePair(args));
+    } catch (err) {
+      return toolError(err);
+    }
+  }
+);
+
+server.registerTool(
+  'generate-spectrum-theme',
+  {
+    title: 'Generate Spectrum-safe theme',
+    description: 'Generate a Spectrum-oriented Adobe UI theme from brand hex keys and AA/AAA targets. Uses semantic ratios (border, largeText, icon, text) in LCH, emits light/dark modes with CSS variables and DTCG tokens, and optional PR-ready diffs.',
+    inputSchema: z.object({
+      brandColors: z.array(brandColorSchema),
+      neutralKeys: z.array(z.string()).optional(),
+      neutralName: z.string().optional(),
+      level: z.enum(['AA', 'AAA']).optional(),
+      modes: z
+        .object({
+          light: z.number().min(0).max(100).optional(),
+          dark: z.number().min(0).max(100).optional()
+        })
+        .optional(),
+      contrast: z.number().optional(),
+      saturation: z.number().min(0).max(100).optional(),
+      output: outputFormatSchema.optional(),
+      formula: z.enum(['wcag2', 'wcag3']).optional(),
+      themeName: z.string().optional(),
+      baseline: baselineSchema
+    })
+  },
+  async (args) => {
+    try {
+      return toolResult(generateSpectrumTheme(args));
+    } catch (err) {
+      return toolError(err);
+    }
+  }
+);
+
+server.registerTool(
+  'audit-token-set',
+  {
+    title: 'Audit token set',
+    description: 'Audit a flat or DTCG-ish color token set against a background and AA/AAA role thresholds. Returns failures, suggested ratio/value fixes (when recolor brand keys are provided), CSS/DTCG output, and PR-ready unified diffs.',
+    inputSchema: z.object({
+      background: z.string(),
+      tokens: z.record(z.unknown()),
+      level: z.enum(['AA', 'AAA']).optional(),
+      roles: z.record(z.enum(['border', 'largeText', 'icon', 'text'])).optional(),
+      recolor: z
+        .array(
+          z.object({
+            name: z.string().optional(),
+            colorKeys: z.array(z.string())
+          })
+        )
+        .optional(),
+      formula: z.enum(['wcag2', 'wcag3']).optional(),
+      lightness: z.number().min(0).max(100).optional(),
+      themeName: z.string().optional(),
+      baseline: baselineSchema
+    })
+  },
+  async (args) => {
+    try {
+      return toolResult(auditTokenSet(args));
+    } catch (err) {
+      return toolError(err);
     }
   }
 );
@@ -76,13 +199,9 @@ server.registerTool(
   },
   async (args) => {
     try {
-      const result = checkContrast(args);
-      return {
-        content: [{type: 'text', text: JSON.stringify(result, null, 2)}],
-        structuredContent: result
-      };
+      return toolResult(checkContrast(args));
     } catch (err) {
-      return {content: [{type: 'text', text: err.message}], isError: true};
+      return toolError(err);
     }
   }
 );
@@ -99,13 +218,9 @@ server.registerTool(
   },
   async (args) => {
     try {
-      const result = convertColor(args);
-      return {
-        content: [{type: 'text', text: JSON.stringify(result, null, 2)}],
-        structuredContent: result
-      };
+      return toolResult(convertColor(args));
     } catch (err) {
-      return {content: [{type: 'text', text: err.message}], isError: true};
+      return toolError(err);
     }
   }
 );
@@ -117,7 +232,8 @@ server.registerTool(
     description: 'Create an interpolated color scale from color keys (no contrast targeting).',
     inputSchema: z.object({
       colorKeys: z.array(z.string()),
-      colorspace: z.enum(['LCH', 'LAB', 'RGB', 'HSL', 'HSV', 'HSLuv', 'CAM02', 'CAM02p', 'OKLAB', 'OKLCH']).optional(),
+      colorspace: colorSpaceSchema.optional(),
+      colorSpace: colorSpaceSchema.optional(),
       steps: z.number().int().min(2),
       smooth: z.boolean().optional(),
       shift: z.number().optional(),
@@ -128,13 +244,9 @@ server.registerTool(
   },
   async (args) => {
     try {
-      const result = createPalette(args);
-      return {
-        content: [{type: 'text', text: JSON.stringify(result, null, 2)}],
-        structuredContent: result
-      };
+      return toolResult(createPalette(args));
     } catch (err) {
-      return {content: [{type: 'text', text: err.message}], isError: true};
+      return toolError(err);
     }
   }
 );
