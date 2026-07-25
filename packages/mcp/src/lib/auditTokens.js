@@ -55,6 +55,20 @@ function tokenCssName(tokenPath) {
 }
 
 /**
+ * Pick the best recolor brand for a token name (prefix/name match, else first).
+ * @param {string} tokenName
+ * @param {Array<{ name?: string, colorKeys: string[] }>} recolor
+ * @returns {string[]}
+ */
+function resolveBrandKeys(tokenName, recolor) {
+  if (!Array.isArray(recolor) || recolor.length === 0) return [];
+  const lower = String(tokenName).toLowerCase();
+  const named = recolor.find((r) => r.name && lower.includes(String(r.name).toLowerCase()));
+  if (named?.colorKeys?.length) return named.colorKeys;
+  return recolor.find((r) => r.colorKeys?.length)?.colorKeys || [];
+}
+
+/**
  * Suggest a fixed hex by solving a one-color Theme at the target ratio.
  * @param {{
  *   background: string;
@@ -148,7 +162,6 @@ export function auditTokenSet(args) {
   const flat = flattenTokens(tokens);
   const thresholds = getRoleThresholds(level);
   const method = formula === 'wcag3' ? 'wcag3' : 'wcag2';
-  const brandKeys = recolor.flatMap((r) => r.colorKeys || []);
 
   const results = [];
   const failures = [];
@@ -185,7 +198,7 @@ export function auditTokenSet(args) {
       failures.push(entry);
       const suggestedValue = suggestValueFromBrand({
         background,
-        brandKeys,
+        brandKeys: resolveBrandKeys(name, recolor),
         targetRatio,
         tokenName: name,
         lightness,

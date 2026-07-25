@@ -114,6 +114,30 @@ describe('audit-token-set', () => {
     assert(result.diff);
     assert(result.diff.css || result.diff.tokens);
   });
+
+  it('matches recolor brands by token name prefix', () => {
+    const result = auditTokenSet({
+      background: '#ffffff',
+      level: 'AA',
+      tokens: {
+        'blue-text': '#8AB4F8',
+        'red-text': '#F5A9A9'
+      },
+      roles: {
+        'blue-text': 'text',
+        'red-text': 'text'
+      },
+      recolor: [
+        {name: 'blue', colorKeys: ['#5CDBFF', '#1473E6', '#0000FF']},
+        {name: 'red', colorKeys: ['#FF9A81', '#E34850', '#D31510']}
+      ]
+    });
+    const blueFix = result.fixes.find((f) => f.name === 'blue-text');
+    const redFix = result.fixes.find((f) => f.name === 'red-text');
+    assert(blueFix?.suggestedValue);
+    assert(redFix?.suggestedValue);
+    assert.notEqual(blueFix.suggestedValue, redFix.suggestedValue);
+  });
 });
 
 describe('generate-theme-pair', () => {
