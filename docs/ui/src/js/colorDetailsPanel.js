@@ -20,7 +20,7 @@ import {createRGBchannelChart} from './createRGBchannelChart';
 import {baseScaleOptions} from './createBaseScaleOptions';
 import {openDetailTab} from './tabs';
 import {createDetailOutputColors} from './createOutputColors';
-import {_theme, _colorScales} from './initialTheme';
+import {_theme} from './initialTheme';
 import {downloadSVGgradient} from './createSVGgradient';
 import {create3dModel} from './create3dModel';
 import {createColorWheel, updateColorDots, updateColorWheel} from './colorWheel';
