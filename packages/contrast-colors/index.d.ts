@@ -178,6 +178,17 @@ export function createScale(options: CreateScaleOptions & {asFun: true}): (typeo
 export function createScale(options?: CreateScaleOptions & {asFun?: false}): CssColor[];
 export function createScale(options?: CreateScaleOptions): (typeof ChromaJs)['Scale'] | CssColor[];
 
+/**
+ * Generate suggested shade hex colors from a base color.
+ * Distributes shades across the full lightness range (white→key→black) via LCH
+ * interpolation so hue is preserved along the scale.
+ *
+ * @param baseColor - Base color as a CSS color string (typically hex).
+ * @param shadeCount - Number of shades to return (integer >= 2).
+ * @returns Hex color strings from lightest to darkest.
+ */
+export function getSuggestedShades(baseColor: CssColor | string, shadeCount: number): CssColor[];
+
 export function luminance(r: number, g: number, b: number): number;
 
 export function contrast(

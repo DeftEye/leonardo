@@ -465,6 +465,42 @@ function ratioName(r, formula) {
   return nArr;
 }
 
+/**
+ * Generate suggested shade hex colors from a base color.
+ * Uses {@link createScale} in LCH with a full white→key→black ramp so shades are
+ * distributed across the lightness range while preserving hue along the scale.
+ *
+ * @param {string} baseColor - Base color as a CSS color string (typically hex, e.g. `#1473E6`).
+ * @param {number} shadeCount - Number of shades to return (integer >= 2).
+ * @returns {string[]} Hex color strings from lightest to darkest.
+ * @throws {Error} If `baseColor` is invalid or `shadeCount` is not a finite number >= 2.
+ *
+ * @example
+ * getSuggestedShades('#1473E6', 5);
+ * // ['#ffffff', '#b9c4f6', '#668dec', '#004cb7', '#000000']
+ */
+function getSuggestedShades(baseColor, shadeCount) {
+  if (!baseColor || !chroma.valid(String(baseColor))) {
+    throw new Error(`Cannot generate shades from invalid color “${baseColor}”`);
+  }
+  if (typeof shadeCount !== 'number' || !Number.isFinite(shadeCount) || shadeCount < 2) {
+    throw new Error(`shadeCount must be a number >= 2; received “${shadeCount}”`);
+  }
+
+  const swatches = Math.round(shadeCount);
+  if (swatches < 2) {
+    throw new Error(`shadeCount must be a number >= 2; received “${shadeCount}”`);
+  }
+
+  return createScale({
+    swatches,
+    colorKeys: [String(baseColor)],
+    colorSpace: 'LCH',
+    fullScale: true,
+    distributeLightness: 'linear'
+  });
+}
+
 const searchColors = (color, bgRgbArray, baseV, ratioValues, formula) => {
   const colorLen = 3000;
   const colorScale = createScale({
@@ -514,4 +550,4 @@ const searchColors = (color, bgRgbArray, baseV, ratioValues, formula) => {
   return outputColors;
 };
 
-export {cArray, hsluvArray, colorSpaces, convertColorValue, createScale, getContrast, luminance, minPositive, multiplyRatios, ratioName, removeDuplicates, round, searchColors, uniq};
+export {cArray, hsluvArray, colorSpaces, convertColorValue, createScale, getContrast, getSuggestedShades, luminance, minPositive, multiplyRatios, ratioName, removeDuplicates, round, searchColors, uniq};

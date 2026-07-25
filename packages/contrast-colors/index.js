@@ -12,7 +12,7 @@ governing permissions and limitations under the License.
 
 import chroma from 'chroma-js';
 import {extendChroma} from './lib/chroma-plus.js';
-import {convertColorValue, createScale, getContrast as contrast, luminance, minPositive, ratioName} from './lib/utils.js';
+import {convertColorValue, createScale, getContrast as contrast, getSuggestedShades, luminance, minPositive, ratioName} from './lib/utils.js';
 
 import {Color} from './lib/color.js';
 import {BackgroundColor} from './lib/backgroundcolor.js';
@@ -23,4 +23,4 @@ extendChroma(chroma);
 // console.color('#6fa7ff');
 // console.ramp(chroma.scale(['yellow', 'navy']).mode('hsl'))
 
-export {Color, BackgroundColor, Theme, createScale, luminance, contrast, minPositive, ratioName, convertColorValue};
+export {Color, BackgroundColor, Theme, createScale, getSuggestedShades, luminance, contrast, minPositive, ratioName, convertColorValue};
