@@ -145,6 +145,10 @@
                         onclick="openColorTab(event, 'paletteModelWrapper')">
                         <label class="spectrum-Tabs-itemLabel">3d model</label>
                     </div>
+                    <div id="tabAdaptive" class="spectrum-Tabs-item color-Tabs-item" tabindex="0"
+                        onclick="openColorTab(event, 'adaptiveWrapper')">
+                        <label class="spectrum-Tabs-itemLabel">Adaptive</label>
+                    </div>
                 </div>
             </div>
 
@@ -272,6 +276,67 @@
                     <img id="ModelImage_LCH" class="ModelImage is-hidden" src="images/colorspaces/LCH.png" />
                     <img id="ModelImage_LUV" class="ModelImage is-hidden" src="images/colorspaces/LUV.png" />
                     <img id="ModelImage_OKLAB" class="ModelImage is-hidden" src="images/colorspaces/OKLAB.png" />
+                </div>
+            </div>
+
+            <div id="adaptiveWrapper" class="colorTabsWrapper">
+                <div id="adaptivePanel">
+                    <div id="adaptivePreviewControls" class="spectrum-Form spectrum-Form--row">
+                        <div class="adaptivePreviewControls-copy">
+                            <h5 class="spectrum-Heading spectrum-Heading--sizeXXS">Adaptive preview</h5>
+                            <p class="spectrum-Body spectrum-Body--sizeXS">
+                                Lightness, contrast, and saturation regenerate colors from the same recipe without changing key colors or target ratios.
+                            </p>
+                            <p class="spectrum-Body spectrum-Body--sizeXS" id="adaptiveKnobReadout">
+                                Lightness 100% · Contrast 100% · Saturation 100%
+                            </p>
+                        </div>
+                        <div class="adaptivePreviewControls-actions spectrum-ActionGroup">
+                            <button type="button" id="adaptiveOpenSettings"
+                                class="spectrum-Button spectrum-Button--sizeM spectrum-Button--secondary">
+                                <span class="spectrum-Button-label">Theme settings</span>
+                            </button>
+                            <button type="button" id="adaptiveReset"
+                                class="spectrum-Button spectrum-Button--sizeM spectrum-Button--primary">
+                                <span class="spectrum-Button-label">Reset adaptive</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="adaptivePreviewRoot" class="adaptivePreviewRoot" aria-label="Adaptive theme preview">
+                        <div class="adaptivePreview-surface">
+                            <div class="adaptivePreview-header">
+                                <span class="adaptivePreview-badge">Adaptive</span>
+                                <h3 class="adaptivePreview-title">Sample interface</h3>
+                            </div>
+                            <p class="adaptivePreview-body">
+                                Drag Theme settings knobs to see this preview and the token diff update from the same color scales.
+                            </p>
+                            <div class="adaptivePreview-actions">
+                                <button type="button" class="adaptivePreview-button adaptivePreview-button--primary">Primary</button>
+                                <button type="button" class="adaptivePreview-button adaptivePreview-button--secondary">Secondary</button>
+                            </div>
+                            <label class="adaptivePreview-field">
+                                <span class="adaptivePreview-fieldLabel">Input</span>
+                                <input type="text" class="adaptivePreview-input" value="Token preview" readonly />
+                            </label>
+                        </div>
+                    </div>
+
+                    <div id="adaptiveTokenDiff">
+                        <div class="adaptiveTokenDiff-header spectrum-Form spectrum-Form--row">
+                            <h5 class="spectrum-Heading spectrum-Heading--sizeXXS">Token diff</h5>
+                            <div class="spectrum-Switch">
+                                <input type="checkbox" class="spectrum-Switch-input" id="adaptiveChangedOnly" checked>
+                                <span class="spectrum-Switch-switch"></span>
+                                <label class="spectrum-Switch-label" for="adaptiveChangedOnly">Changed only</label>
+                            </div>
+                        </div>
+                        <div id="adaptiveTokenDiffEmpty" class="adaptiveTokenDiff-empty spectrum-Body spectrum-Body--sizeS">
+                            Add colors to your theme to compare adaptive tokens against the authoring baseline (lightness 100, contrast 1, saturation 100).
+                        </div>
+                        <div id="adaptiveTokenDiffTable" class="adaptiveTokenDiff-table" hidden></div>
+                    </div>
                 </div>
             </div>
 

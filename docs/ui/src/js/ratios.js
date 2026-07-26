@@ -17,7 +17,6 @@ import {createOutputColors} from './createOutputColors';
 import {createOutputParameters} from './createOutputParameters';
 import {createRatioChart, createLuminosityChart} from './createRatioChart';
 import {randomId, round, lerp} from './utils';
-import {difference} from 'd3';
 
 function addRatio() {
   let wcagFormula = document.getElementById('themeWCAG').value;
@@ -457,6 +456,9 @@ function ratioUpdate(chartRatios = Promise.resolve(getThemeContrastRatios()), ch
     createRatioChart(values[0]);
     createLuminosityChart(values[1]);
     createOutputParameters();
+    if (typeof window.updateAdaptivePreview === 'function') {
+      window.updateAdaptivePreview();
+    }
   });
 }
 

@@ -1,0 +1,206 @@
+/*
+Copyright 2024 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+
+#adaptiveWrapper {
+  display: none;
+  flex-direction: column;
+  width: 100%;
+}
+
+#adaptivePanel {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+  padding: 8px 0 24px;
+}
+
+#adaptivePreviewControls {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.adaptivePreviewControls-copy {
+  max-width: 560px;
+
+  p {
+    margin: 4px 0 0;
+  }
+}
+
+.adaptivePreviewControls-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.adaptivePreviewRoot {
+  --adaptive-bg: #ffffff;
+  --adaptive-surface: #f4f4f4;
+  --adaptive-text: #1b1b1b;
+  --adaptive-text-muted: #6e6e6e;
+  --adaptive-border: #d3d3d3;
+  --adaptive-accent: #2663eb;
+  --adaptive-accent-subtle: #78a0ff;
+  --adaptive-on-accent: #ffffff;
+
+  background: var(--adaptive-bg);
+  color: var(--adaptive-text);
+  border: 1px solid var(--adaptive-border);
+  border-radius: 4px;
+  padding: 20px;
+  min-height: 220px;
+  box-sizing: border-box;
+
+  &.is-empty {
+    opacity: 0.55;
+  }
+}
+
+.adaptivePreview-surface {
+  background: var(--adaptive-surface);
+  border: 1px solid var(--adaptive-border);
+  border-radius: 4px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 420px;
+}
+
+.adaptivePreview-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.adaptivePreview-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: var(--adaptive-accent-subtle);
+  color: var(--adaptive-on-accent);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.adaptivePreview-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--adaptive-text);
+}
+
+.adaptivePreview-body {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--adaptive-text-muted);
+}
+
+.adaptivePreview-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.adaptivePreview-button {
+  appearance: none;
+  border-radius: 4px;
+  border: 1px solid transparent;
+  padding: 8px 14px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: default;
+}
+
+.adaptivePreview-button--primary {
+  background: var(--adaptive-accent);
+  color: var(--adaptive-on-accent);
+}
+
+.adaptivePreview-button--secondary {
+  background: transparent;
+  color: var(--adaptive-text);
+  border-color: var(--adaptive-border);
+}
+
+.adaptivePreview-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.adaptivePreview-fieldLabel {
+  font-size: 12px;
+  color: var(--adaptive-text-muted);
+}
+
+.adaptivePreview-input {
+  appearance: none;
+  border: 1px solid var(--adaptive-border);
+  border-radius: 4px;
+  background: var(--adaptive-bg);
+  color: var(--adaptive-text);
+  padding: 8px 10px;
+  font-size: 14px;
+}
+
+#adaptiveTokenDiff {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.adaptiveTokenDiff-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.adaptiveTokenDiff-empty,
+.adaptiveTokenDiff-none {
+  margin: 0;
+  color: var(--spectrum-global-color-gray-700, #6e6e6e);
+}
+
+.adaptiveTokenDiff-table {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.adaptiveTokenDiff-swatchWrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.adaptiveTokenDiff-swatch {
+  width: 16px;
+  height: 16px;
+  border-radius: 2px;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  flex-shrink: 0;
+}
+
+.adaptiveTokenDiff-row--unchanged {
+  opacity: 0.55;
+}
+
+.adaptiveTokenDiff-missing {
+  color: var(--spectrum-global-color-gray-600, #8e8e8e);
+}
