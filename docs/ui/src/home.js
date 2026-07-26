@@ -11,7 +11,7 @@ governing permissions and limitations under the License.
 */
 
 import './index.css';
-import {pageLoader} from './js/pageLoader';
+import {schedulePageLoader} from './js/pageLoader';
 import hljs from 'highlight.js/lib/core';
 import javascript from 'highlight.js/lib/languages/javascript';
 import bash from 'highlight.js/lib/languages/bash';
@@ -57,9 +57,15 @@ function highlightDocsSideNav() {
   }
 }
 
-window.addEventListener('load', () => {
+function initHomePage() {
   highlightHeaderTab();
   highlightDocsSideNav();
   hljs.highlightAll();
-  pageLoader();
-});
+  schedulePageLoader();
+}
+
+if (document.readyState === 'complete') {
+  initHomePage();
+} else {
+  window.addEventListener('load', initHomePage, {once: true});
+}

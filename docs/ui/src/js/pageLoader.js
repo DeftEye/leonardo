@@ -16,14 +16,34 @@ function pageLoader() {
 
   if (page) {
     page.style.transition = `opacity ${transitionMs}ms ease-out`;
+    // Commit the starting opacity before transitioning to 1.
+    void page.offsetWidth;
     page.style.opacity = '1';
   }
 
   if (loader) {
     loader.style.transition = `opacity ${transitionMs}ms ease-out`;
+    void loader.offsetWidth;
     loader.style.opacity = '0';
-    setTimeout(() => loader.remove(), transitionMs + 50);
+  }
+
+  // Finish reveal even if the opacity transition never advances (throttled tabs).
+  setTimeout(() => {
+    if (page) {
+      page.style.transition = 'none';
+      page.style.opacity = '1';
+    }
+    loader?.remove();
+  }, transitionMs + 50);
+}
+
+/** Reveal the page after modules load, even if `window` `load` already fired. */
+function schedulePageLoader() {
+  if (document.readyState === 'complete') {
+    pageLoader();
+  } else {
+    window.addEventListener('load', pageLoader, {once: true});
   }
 }
 
-export {pageLoader};
+export {pageLoader, schedulePageLoader};

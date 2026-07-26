@@ -87,14 +87,13 @@ import {addLightnessBulk, bulkLightnessInput, cancelLightnessBulk} from './js/ad
 import {clearAllColors} from './js/keyColors';
 import {showToast, hideToast, exitPreview, neverShowToast} from './js/toast';
 import {addFromURL, addFromURLDialog, cancelURL} from './js/addFromURL';
-import updateThemeTitle from './js/themeTitle';
+import './js/themeTitle';
 import {addRatio, sortRatios} from './js/ratios';
 import {openPanelTab, openTab, openDetailTab, openAppTab, openColorTab} from './js/tabs';
-import toggleTooltip from './js/tooltip';
+import './js/tooltip';
 import {downloadUiKit, createSVGuiKit} from './js/createSVGuiKit';
-import {toggleSwatchAttributes} from './js/toggleSwatchAttributes';
-import {pageLoader} from './js/pageLoader';
-import {format} from 'path';
+import './js/toggleSwatchAttributes';
+import {schedulePageLoader} from './js/pageLoader';
 import {create3dModel} from './js/create3dModel';
 import {sortColorScales} from './js/sortColorScales';
 import {togglePopover} from './js/popover';
@@ -176,6 +175,4 @@ document.getElementById('tabPalette').click();
 document.getElementById('tabContrastingPairs').click();
 document.getElementById('tabColorWheel').click();
 
-window.onload = function () {
-  pageLoader();
-};
+schedulePageLoader();

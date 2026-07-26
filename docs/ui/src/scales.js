@@ -66,7 +66,7 @@ import './scss/components/toast.scss';
 import './scss/components/tooltip.scss';
 
 import '@adobe/focus-ring-polyfill';
-import {pageLoader} from './js/pageLoader';
+import {schedulePageLoader} from './js/pageLoader';
 
 import * as Leo from '@adobe/leonardo-contrast-colors';
 import loadIcons from 'loadicons';
@@ -85,7 +85,7 @@ import {colorScaleDiverging} from './js/colorScaleDiverging';
 import {colorScaleSequential} from './js/colorScaleSequential';
 import {colorScaleQualitative} from './js/colorScaleQualitative';
 
-import toggleTooltip from './js/tooltip';
+import './js/tooltip';
 import {create3dModel} from './js/create3dModel';
 import {createSVGswatches, downloadSwatches} from './js/createSVGswatches';
 import {createXML, downloadXML} from './js/createXML';
@@ -125,12 +125,4 @@ colorScaleSequential();
 colorScaleDiverging();
 colorScaleQualitative();
 
-window.onload = function () {
-  // let uri = window.location.toString();
-  // let cleanURL = uri.substring(0, uri.indexOf("?"));
-
-  // window.history.replaceState({}, document.title, cleanURL);
-
-  // On window load, transition to remove page loader
-  pageLoader();
-};
+schedulePageLoader();

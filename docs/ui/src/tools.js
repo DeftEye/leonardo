@@ -64,7 +64,7 @@ import './scss/components/toast.scss';
 import './scss/components/tooltip.scss';
 
 import '@adobe/focus-ring-polyfill';
-import {pageLoader} from './js/pageLoader';
+import {schedulePageLoader} from './js/pageLoader';
 
 import loadIcons from 'loadicons';
 loadIcons('./spectrum-css-icons.svg');
@@ -73,9 +73,9 @@ loadIcons('./spectrum-icons.svg');
 // Import local Javascript functions
 import {throttle} from './js/utils';
 import {openPanelTab, openTab, openAppTab} from './js/tabs';
-import toggleTooltip from './js/tooltip';
+import './js/tooltip';
 import {compareColors} from './js/compareColors';
-import {convertColors} from './js/convertColors';
+import './js/convertColors';
 import {bulkConvert, bulkItemConvertColorInput, cancelBulkConvert} from './js/bulkConvertDialog';
 
 window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (event) => {
@@ -106,7 +106,4 @@ document.getElementById('compareColorTwoInput').dispatchEvent(new Event('input')
 
 document.getElementById('convertColorOneInput').dispatchEvent(new Event('input'));
 
-window.onload = function () {
-  // On window load, transition to remove page loader
-  pageLoader();
-};
+schedulePageLoader();

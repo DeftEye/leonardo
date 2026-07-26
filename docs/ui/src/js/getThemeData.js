@@ -10,7 +10,7 @@ governing permissions and limitations under the License.
 */
 
 import {getLightness} from './utils';
-import {_theme, _colorScales} from './initialTheme';
+import {_theme} from './initialTheme';
 
 window.getColorClassById = getColorClassById;
 function getColorClassById(id) {
