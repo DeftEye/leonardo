@@ -53,12 +53,6 @@ export function initBackToTop() {
   button.addEventListener('click', () => {
     const behavior = reducedMotion.matches ? 'auto' : 'smooth';
     scrollSource.scrollTo({top: 0, behavior});
-    // Keep keyboard focus anchored to the top of the content after scrolling.
-    const focusTarget = container.querySelector('h1, [tabindex]') || container;
-    if (focusTarget) {
-      if (!focusTarget.hasAttribute('tabindex')) focusTarget.setAttribute('tabindex', '-1');
-      focusTarget.focus({preventScroll: true});
-    }
   });
 
   scrollSource.addEventListener('scroll', updateVisibility, {passive: true});
