@@ -49,12 +49,23 @@ export function initBackToTop() {
     button.classList.toggle('is-visible', maxScrollTop() > SCROLL_THRESHOLD);
   };
 
+  // Throttle scroll handling to one read per frame to avoid layout thrashing.
+  let ticking = false;
+  const requestVisibilityUpdate = () => {
+    if (ticking) return;
+    ticking = true;
+    window.requestAnimationFrame(() => {
+      ticking = false;
+      updateVisibility();
+    });
+  };
+
   button.addEventListener('click', () => {
     const behavior = reducedMotion.matches ? 'auto' : 'smooth';
     scrollers.forEach((scroller) => scroller.scrollTo({top: 0, behavior}));
   });
 
-  scrollers.forEach((scroller) => scroller.addEventListener('scroll', updateVisibility, {passive: true}));
-  window.addEventListener('resize', updateVisibility, {passive: true});
+  scrollers.forEach((scroller) => scroller.addEventListener('scroll', requestVisibilityUpdate, {passive: true}));
+  window.addEventListener('resize', requestVisibilityUpdate, {passive: true});
   updateVisibility();
 }
