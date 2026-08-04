@@ -9,14 +9,8 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-// Distance (px) the user must scroll before the button reveals itself.
+// Distance (px) any scroller must travel before the button reveals itself.
 const SCROLL_THRESHOLD = 400;
-
-// The doc pages scroll inside `.home-Wrapper`, not the window. Fall back to the
-// document scroller so the button still works if that container is absent.
-function getScrollContainer() {
-  return document.querySelector('.home-Wrapper') || document.scrollingElement || document.documentElement;
-}
 
 function createButton() {
   const button = document.createElement('button');
@@ -29,33 +23,38 @@ function createButton() {
 }
 
 /**
- * Mounts a floating "back to top" button that appears once the user scrolls
- * past SCROLL_THRESHOLD and smoothly returns them to the top on activation.
- * Safe to call on any page; it no-ops when no scroll container exists.
+ * Mounts a floating "back to top" button that appears once any relevant scroller
+ * passes SCROLL_THRESHOLD and returns the user to the top on activation.
+ *
+ * Doc pages scroll inside `.home-Wrapper`, but the window/document can scroll too
+ * depending on how the user navigates, so both are tracked and reset together.
+ * Safe to call on any page.
  */
 export function initBackToTop() {
-  const container = getScrollContainer();
-  if (!container) return;
+  // Distinct scrollers to watch/reset: the window and the main content container.
+  const container = document.querySelector('.home-Wrapper');
+  const scrollers = [window];
+  if (container) scrollers.push(container);
 
-  const isWindowScroller = container === document.scrollingElement || container === document.documentElement;
-  const scrollSource = isWindowScroller ? window : container;
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
   const button = createButton();
   (document.getElementById('page') || document.body).appendChild(button);
 
-  const currentScrollTop = () => (isWindowScroller ? window.scrollY || document.documentElement.scrollTop : container.scrollTop);
+  const scrollTopOf = (scroller) => (scroller === window ? window.scrollY || document.documentElement.scrollTop || 0 : scroller.scrollTop || 0);
+
+  const maxScrollTop = () => scrollers.reduce((max, scroller) => Math.max(max, scrollTopOf(scroller)), 0);
 
   const updateVisibility = () => {
-    button.classList.toggle('is-visible', currentScrollTop() > SCROLL_THRESHOLD);
+    button.classList.toggle('is-visible', maxScrollTop() > SCROLL_THRESHOLD);
   };
 
   button.addEventListener('click', () => {
     const behavior = reducedMotion.matches ? 'auto' : 'smooth';
-    scrollSource.scrollTo({top: 0, behavior});
+    scrollers.forEach((scroller) => scroller.scrollTo({top: 0, behavior}));
   });
 
-  scrollSource.addEventListener('scroll', updateVisibility, {passive: true});
+  scrollers.forEach((scroller) => scroller.addEventListener('scroll', updateVisibility, {passive: true}));
   window.addEventListener('resize', updateVisibility, {passive: true});
   updateVisibility();
 }
