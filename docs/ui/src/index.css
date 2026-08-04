@@ -33,6 +33,7 @@ governing permissions and limitations under the License.
 @import './scss/components/selectBox.scss';
 @import './scss/components/articleCard.scss';
 @import './scss/components/highlightCode.scss';
+@import './scss/components/backToTop.scss';
 
 /* Doc static pages: single content section visible without JS */
 #homeContent,
