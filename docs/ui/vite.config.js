@@ -54,7 +54,8 @@ export default {
         theme: resolve(__dirname, 'src/theme.html'),
         scales: resolve(__dirname, 'src/scales.html'),
         tools: resolve(__dirname, 'src/tools.html'),
-        demo: resolve(__dirname, 'src/demo.html')
+        demo: resolve(__dirname, 'src/demo.html'),
+        image: resolve(__dirname, 'src/image.html')
       }
     }
   },
