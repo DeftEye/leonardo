@@ -11,6 +11,7 @@ governing permissions and limitations under the License.
 */
 
 import {saveAs} from 'file-saver';
+import * as Sentry from '@sentry/browser';
 import {throttle} from './utils';
 import {extractPaletteFromImage, renderPaletteSwatches} from './imagePalette';
 import {capturePreviewImageData, processImageData, paintImageData, renderExportBlob} from './imageRecolor';
@@ -150,11 +151,41 @@ function loadImageElement(fileUrl) {
   });
 }
 
+function reportUnsupportedUpload(file) {
+  const type = file?.type || 'unknown';
+  const name = file?.name || 'unnamed';
+  const error = new Error(`Image Studio rejected unsupported upload: expected an image, got ${type} (${name})`);
+  error.name = 'UnsupportedUploadError';
+
+  Sentry.withScope((scope) => {
+    scope.setTag('feature', 'image-studio');
+    scope.setTag('upload.rejected', 'true');
+    scope.setContext('upload', {
+      fileName: name,
+      fileType: type,
+      fileSize: file?.size ?? null
+    });
+    Sentry.captureException(error);
+  });
+
+  return error;
+}
+
 async function handleFile(file) {
-  if (!file || !validFileType(file)) {
+  if (!file) {
     const meta = $('imageStudioFileMeta');
     meta.hidden = false;
-    meta.textContent = file ? `“${file.name}” is not a supported image type.` : 'No file selected.';
+    meta.textContent = 'No file selected.';
+    return;
+  }
+
+  // Allow the picker to select any file (including PDF). Validation catches
+  // unsupported types here and reports them to Sentry.
+  if (!validFileType(file)) {
+    reportUnsupportedUpload(file);
+    const meta = $('imageStudioFileMeta');
+    meta.hidden = false;
+    meta.textContent = `“${file.name}” is not a supported image type (${file.type || 'unknown'}). Error reported.`;
     return;
   }
 
@@ -186,6 +217,7 @@ async function handleFile(file) {
     recomputePreview();
   } catch (err) {
     console.error(err);
+    Sentry.captureException(err);
     const meta = $('imageStudioFileMeta');
     meta.hidden = false;
     meta.textContent = 'Could not process that image. Try another file.';
