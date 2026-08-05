@@ -63,6 +63,7 @@ import './scss/components/statusLabel.scss';
 import './scss/components/textfield.scss';
 import './scss/components/toast.scss';
 import './scss/components/tooltip.scss';
+import './scss/components/adaptivePreview.scss';
 
 import '@adobe/focus-ring-polyfill';
 
@@ -87,18 +88,17 @@ import {addLightnessBulk, bulkLightnessInput, cancelLightnessBulk} from './js/ad
 import {clearAllColors} from './js/keyColors';
 import {showToast, hideToast, exitPreview, neverShowToast} from './js/toast';
 import {addFromURL, addFromURLDialog, cancelURL} from './js/addFromURL';
-import updateThemeTitle from './js/themeTitle';
+import './js/themeTitle';
 import {addRatio, sortRatios} from './js/ratios';
 import {openPanelTab, openTab, openDetailTab, openAppTab, openColorTab} from './js/tabs';
-import toggleTooltip from './js/tooltip';
+import {toggleTooltip} from './js/tooltip';
 import {downloadUiKit, createSVGuiKit} from './js/createSVGuiKit';
-import {toggleSwatchAttributes} from './js/toggleSwatchAttributes';
+import {toggleSwatchContrast, toggleSwatchLuminosity} from './js/toggleSwatchAttributes';
 import {pageLoader} from './js/pageLoader';
-import {format} from 'path';
 import {create3dModel} from './js/create3dModel';
 import {sortColorScales} from './js/sortColorScales';
 import {togglePopover} from './js/popover';
-import {forceSimulation} from 'd3';
+import {setupAdaptivePreview, updateAdaptivePreview} from './js/adaptivePreview';
 
 window.updateParams = updateParams;
 function updateParams() {
@@ -175,6 +175,9 @@ document.getElementById('tabJSParameters').click();
 document.getElementById('tabPalette').click();
 document.getElementById('tabContrastingPairs').click();
 document.getElementById('tabColorWheel').click();
+
+setupAdaptivePreview();
+updateAdaptivePreview();
 
 window.onload = function () {
   pageLoader();

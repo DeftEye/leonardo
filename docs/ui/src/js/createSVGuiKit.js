@@ -11,7 +11,7 @@ governing permissions and limitations under the License.
 
 import {saveAs} from 'file-saver';
 import d3 from './d3';
-import {_theme, _themeTypography} from './initialTheme';
+import {_theme} from './initialTheme';
 import {getThemeName, getContrastRatioInputs} from './getThemeData';
 import {capitalizeFirstLetter} from './utils';
 

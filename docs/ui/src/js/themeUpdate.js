@@ -44,6 +44,10 @@ function themeUpdate() {
   chartLuminosities.then(function (resolve) {
     createLuminosityChart(resolve);
   });
+
+  if (typeof window.updateAdaptivePreview === 'function') {
+    window.updateAdaptivePreview();
+  }
 }
 
 function themeUpdateParams() {

@@ -73,9 +73,9 @@ loadIcons('./spectrum-icons.svg');
 // Import local Javascript functions
 import {throttle} from './js/utils';
 import {openPanelTab, openTab, openAppTab} from './js/tabs';
-import toggleTooltip from './js/tooltip';
+import {toggleTooltip} from './js/tooltip';
 import {compareColors} from './js/compareColors';
-import {convertColors} from './js/convertColors';
+import {convertColor} from './js/convertColors';
 import {bulkConvert, bulkItemConvertColorInput, cancelBulkConvert} from './js/bulkConvertDialog';
 
 window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (event) => {

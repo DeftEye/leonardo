@@ -55,6 +55,10 @@ function sliderInput(e) {
     chartRatios.then(function (resolve) {
       createRatioChart(resolve, isStep);
     });
+
+    if (typeof window.updateAdaptivePreview === 'function') {
+      window.updateAdaptivePreview();
+    }
   });
 }
 
