@@ -41,7 +41,11 @@ class Theme {
     }
 
     // Only run the update if saturation is set below 100%
-    if (this._saturation < 100) this._updateColorSaturation(this._saturation);
+    if (this._saturation < 100) {
+      this._updateColorSaturation(this._saturation);
+      // Re-read background after saturation adjusts BackgroundColor's scale
+      this._setBackgroundColorValue();
+    }
 
     this._findContrastColors();
     this._findContrastColorPairs();
@@ -80,6 +84,8 @@ class Theme {
     this._saturation = saturation;
     // Update all colors key colors
     this._updateColorSaturation(saturation);
+    // Background scale depends on saturation-adjusted keys; refresh the cached value
+    this._setBackgroundColorValue();
     this._findContrastColors();
   }
 
@@ -238,9 +244,14 @@ class Theme {
   }
 
   _updateColorSaturation(saturation) {
-    this._colors.map((color) => {
+    this._colors.forEach((color) => {
       color.saturation = saturation;
     });
+    // Background may be a separate object (e.g. constructed from a hex string)
+    // and must still receive saturation so its lightness scale desaturates.
+    if (this._backgroundColor && this._backgroundColor.saturation !== saturation) {
+      this._backgroundColor.saturation = saturation;
+    }
   }
 
   _findContrastColors() {
