@@ -177,7 +177,7 @@ async function handleFile(file) {
     setControlsEnabled(true);
     updateSliderLabels();
 
-    state.palette = await extractPaletteFromImage(state.fileUrl);
+    state.palette = await extractPaletteFromImage(state.image);
     renderPaletteSwatches($('imageStudioSwatches'), state.palette, (index, hex) => {
       state.palette[index] = hex;
       throttledRecompute();
@@ -196,10 +196,10 @@ async function handleFile(file) {
 }
 
 async function reextractPalette() {
-  if (!state.fileUrl) return;
+  if (!state.image) return;
   setProcessing(true);
   try {
-    state.palette = await extractPaletteFromImage(state.fileUrl);
+    state.palette = await extractPaletteFromImage(state.image);
     renderPaletteSwatches($('imageStudioSwatches'), state.palette, (index, hex) => {
       state.palette[index] = hex;
       throttledRecompute();

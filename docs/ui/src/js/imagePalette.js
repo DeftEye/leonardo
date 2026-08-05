@@ -10,25 +10,89 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import {prominent} from 'color.js';
 import chroma from 'chroma-js';
 import {getDifference} from './utils';
 
-const EXTRACT_AMOUNT = 14;
-const EXTRACT_GROUP = 40;
 const MAX_SWATCHES = 10;
-const DEDUPE_DELTA_E = 8;
+const DEDUPE_DELTA_E = 10;
+const SAMPLE_STEP = 8;
+const BUCKET_BITS = 4; // 16 levels per channel
 
 /**
- * Extract a flat, deduped palette of hex colors from an image URL / object URL.
+ * Extract a flat, deduped palette from an HTMLImageElement via canvas sampling.
+ * Avoids color.js workers (unreliable with blob URLs in some environments).
  */
-async function extractPaletteFromImage(fileUrl, {amount = EXTRACT_AMOUNT, max = MAX_SWATCHES} = {}) {
-  const colors = await prominent(fileUrl, {
-    amount,
-    format: 'hex',
-    group: EXTRACT_GROUP
-  });
+async function extractPaletteFromImage(imageOrUrl, {max = MAX_SWATCHES} = {}) {
+  const image = typeof imageOrUrl === 'string' ? await loadImage(imageOrUrl) : imageOrUrl;
+  const colors = sampleProminentColors(image, max * 3);
+  return dedupePalette(colors, max);
+}
 
+function loadImage(src) {
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+    image.onload = () => resolve(image);
+    image.onerror = () => reject(new Error('Could not load image for palette extraction'));
+    image.src = src;
+  });
+}
+
+function sampleProminentColors(image, limit) {
+  const maxEdge = 240;
+  const scale = Math.min(1, maxEdge / Math.max(image.naturalWidth, image.naturalHeight));
+  const width = Math.max(1, Math.round(image.naturalWidth * scale));
+  const height = Math.max(1, Math.round(image.naturalHeight * scale));
+
+  const canvas = document.createElement('canvas');
+  canvas.width = width;
+  canvas.height = height;
+  const ctx = canvas.getContext('2d', {willReadFrequently: true});
+  ctx.drawImage(image, 0, 0, width, height);
+  const {data} = ctx.getImageData(0, 0, width, height);
+
+  const buckets = new Map();
+  const shift = 8 - BUCKET_BITS;
+
+  for (let i = 0; i < data.length; i += 4 * SAMPLE_STEP) {
+    const a = data[i + 3];
+    if (a < 200) continue;
+    const r = data[i];
+    const g = data[i + 1];
+    const b = data[i + 2];
+
+    // Skip near-white / near-black noise for cleaner palettes
+    const max = Math.max(r, g, b);
+    const min = Math.min(r, g, b);
+    if (max < 18 || min > 245) continue;
+
+    const key = ((r >> shift) << (BUCKET_BITS * 2)) | ((g >> shift) << BUCKET_BITS) | (b >> shift);
+    let bucket = buckets.get(key);
+    if (!bucket) {
+      bucket = {r: 0, g: 0, b: 0, count: 0};
+      buckets.set(key, bucket);
+    }
+    bucket.r += r;
+    bucket.g += g;
+    bucket.b += b;
+    bucket.count += 1;
+  }
+
+  return [...buckets.values()]
+    .sort((a, b) => b.count - a.count)
+    .slice(0, Math.max(limit, maxSwatchFloor(limit)))
+    .map((bucket) => {
+      const r = Math.round(bucket.r / bucket.count);
+      const g = Math.round(bucket.g / bucket.count);
+      const b = Math.round(bucket.b / bucket.count);
+      return chroma(r, g, b, 'rgb').hex();
+    });
+}
+
+function maxSwatchFloor(limit) {
+  return Math.max(limit, MAX_SWATCHES);
+}
+
+function dedupePalette(colors, max) {
   const unique = [];
   for (let i = 0; i < colors.length; i++) {
     const hex = chroma(colors[i]).hex();
@@ -37,7 +101,6 @@ async function extractPaletteFromImage(fileUrl, {amount = EXTRACT_AMOUNT, max = 
     if (unique.length >= max) break;
   }
 
-  // Prefer variety by sorting remaining by chroma then lightness spread
   return unique.sort((a, b) => chroma(b).get('lch.c') - chroma(a).get('lch.c'));
 }
 
@@ -112,4 +175,4 @@ function renderPaletteSwatches(container, palette, onChange) {
   });
 }
 
-export {extractPaletteFromImage, renderPaletteSwatches, EXTRACT_AMOUNT, MAX_SWATCHES};
+export {extractPaletteFromImage, renderPaletteSwatches, MAX_SWATCHES};

@@ -41,7 +41,7 @@ loadIcons('./spectrum-css-icons.svg');
 loadIcons('./spectrum-icons.svg');
 
 // Force light mode for Image Studio (ignore system preference)
-document.body.classList.add('spectrum--light');
+document.body.classList.add('spectrum--light', 'imageStudioPage');
 document.body.classList.remove('spectrum--darkest');
 
 initImageStudio();
