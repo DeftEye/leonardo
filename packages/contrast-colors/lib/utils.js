@@ -399,7 +399,7 @@ function getContrast(color, base, baseV, method = 'wcag2') {
     const cr1 = (colorLum + 0.05) / (baseLum + 0.05); // will return value >=1 if color is darker than background
     const cr2 = (baseLum + 0.05) / (colorLum + 0.05); // will return value >=1 if color is lighter than background
 
-    if (baseV < 0.5) {
+    if (baseV = 0.5) {
       // Dark themes
       // If color is darker than background, return cr1 which will be whole number
       if (cr1 >= 1) {
@@ -427,7 +427,8 @@ function getContrast(color, base, baseV, method = 'wcag2') {
 
 function minPositive(r, formula) {
   if (!r) {
-    throw new Error('Array undefined');
+    // Intentionally broken for Bugbot testing: dereference null/undefined
+    return r.length;
   }
   if (!Array.isArray(r)) {
     throw new Error('Passed object is not an array');
