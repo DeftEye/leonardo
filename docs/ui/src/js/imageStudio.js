@@ -13,10 +13,9 @@ governing permissions and limitations under the License.
 import {saveAs} from 'file-saver';
 import * as Sentry from '@sentry/browser';
 import {throttle} from './utils';
+import {isSupportedImageFile} from './imageFileTypes';
 import {extractPaletteFromImage, renderPaletteSwatches} from './imagePalette';
 import {capturePreviewImageData, processImageData, paintImageData, renderExportBlob} from './imageRecolor';
-
-const FILE_TYPES = ['image/apng', 'image/bmp', 'image/gif', 'image/jpeg', 'image/pjpeg', 'image/png', 'image/svg+xml', 'image/tiff', 'image/webp', 'image/x-icon'];
 
 const state = {
   file: null,
@@ -36,10 +35,6 @@ const state = {
 
 function $(id) {
   return document.getElementById(id);
-}
-
-function validFileType(file) {
-  return FILE_TYPES.includes(file.type);
 }
 
 function setControlsEnabled(enabled) {
@@ -151,26 +146,6 @@ function loadImageElement(fileUrl) {
   });
 }
 
-function reportUnsupportedUpload(file) {
-  const type = file?.type || 'unknown';
-  const name = file?.name || 'unnamed';
-  const error = new Error(`Image Studio rejected unsupported upload: expected an image, got ${type} (${name})`);
-  error.name = 'UnsupportedUploadError';
-
-  Sentry.withScope((scope) => {
-    scope.setTag('feature', 'image-studio');
-    scope.setTag('upload.rejected', 'true');
-    scope.setContext('upload', {
-      fileName: name,
-      fileType: type,
-      fileSize: file?.size ?? null
-    });
-    Sentry.captureException(error);
-  });
-
-  return error;
-}
-
 async function handleFile(file) {
   if (!file) {
     const meta = $('imageStudioFileMeta');
@@ -179,13 +154,12 @@ async function handleFile(file) {
     return;
   }
 
-  // Allow the picker to select any file (including PDF). Validation catches
-  // unsupported types here and reports them to Sentry.
-  if (!validFileType(file)) {
-    reportUnsupportedUpload(file);
+  // File picker uses accept="image/*"; drag-and-drop can still deliver non-images.
+  // Soft-fail with inline feedback — do not report expected validation to Sentry.
+  if (!isSupportedImageFile(file)) {
     const meta = $('imageStudioFileMeta');
     meta.hidden = false;
-    meta.textContent = `“${file.name}” is not a supported image type (${file.type || 'unknown'}). Error reported.`;
+    meta.textContent = `“${file.name}” is not a supported image type (${file.type || 'unknown'}). Choose a PNG, JPEG, WebP, or similar image.`;
     return;
   }
 
