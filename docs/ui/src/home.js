@@ -12,6 +12,7 @@ governing permissions and limitations under the License.
 
 import './index.css';
 import {pageLoader} from './js/pageLoader';
+import {initBackToTop} from './js/backToTop';
 import hljs from 'highlight.js/lib/core';
 import javascript from 'highlight.js/lib/languages/javascript';
 import bash from 'highlight.js/lib/languages/bash';
@@ -61,5 +62,6 @@ window.addEventListener('load', () => {
   highlightHeaderTab();
   highlightDocsSideNav();
   hljs.highlightAll();
+  initBackToTop();
   pageLoader();
 });
