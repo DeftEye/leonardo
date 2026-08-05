@@ -144,6 +144,72 @@ test('should set theme saturation to 60% (updated)', (t) => {
   t.deepEqual(themeColors, ['rgb(107, 143, 199)', 'rgb(72, 110, 196)']);
 });
 
+test('should desaturate BackgroundColor scale when saturation is 0 in constructor', (t) => {
+  const bg = new BackgroundColor({
+    name: 'brand',
+    colorKeys: ['#FF0000'],
+    colorSpace: 'RGB',
+    ratios: [3, 4.5]
+  });
+  const accent = new Color({
+    name: 'accent',
+    colorKeys: ['#0000FF'],
+    colorSpace: 'RGB',
+    ratios: [3, 4.5]
+  });
+  const theme = new Theme({
+    colors: [bg, accent],
+    backgroundColor: bg,
+    lightness: 80,
+    saturation: 0,
+    output: 'HEX'
+  });
+  // Fully desaturated red background at L*80 must be neutral gray, not pink
+  t.is(theme.contrastColorPairs.background, '#c5c5c5');
+});
+
+test('should desaturate BackgroundColor scale when saturation setter is applied', (t) => {
+  const bg = new BackgroundColor({
+    name: 'brand',
+    colorKeys: ['#FF0000'],
+    colorSpace: 'RGB',
+    ratios: [3, 4.5]
+  });
+  const accent = new Color({
+    name: 'accent',
+    colorKeys: ['#0000FF'],
+    colorSpace: 'RGB',
+    ratios: [3, 4.5]
+  });
+  const theme = new Theme({
+    colors: [bg, accent],
+    backgroundColor: bg,
+    lightness: 80,
+    saturation: 100,
+    output: 'HEX'
+  });
+  t.is(theme.contrastColorPairs.background, '#ffb1b1');
+  theme.saturation = 0;
+  t.is(theme.contrastColorPairs.background, '#c5c5c5');
+});
+
+test('should desaturate string backgroundColor that is not in colors array', (t) => {
+  const accent = new Color({
+    name: 'accent',
+    colorKeys: ['#0000FF'],
+    colorSpace: 'RGB',
+    ratios: [3, 4.5]
+  });
+  const theme = new Theme({
+    colors: [accent],
+    backgroundColor: '#FF0000',
+    saturation: 0,
+    output: 'HEX'
+  });
+  // String backgrounds replace lightness with the key's HSLuv L; result must still be gray
+  t.is(theme.contrastColorPairs.background, '#7e7e7e');
+});
+
 /** Single color updates */
 test('should set colorspace for one color in theme to CAM02', (t) => {
   const gray = new Color({

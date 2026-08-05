@@ -29,17 +29,17 @@ class BackgroundColor extends Color {
     // Then we can run the code for Color, but we've added in more below.
     Color.prototype._generateColorScale.call(this);
 
-    // create massive scale
+    // create massive scale — use saturation-adjusted keys (_modifiedKeys), not raw colorKeys
     const backgroundColorScale = createScale({
       swatches: 1000,
-      colorKeys: this._colorKeys,
-      colorspace: this._colorspace,
+      colorKeys: this._modifiedKeys,
+      colorSpace: this._colorspace,
       shift: 1,
       smooth: this._smooth
     });
 
-    // Inject original keycolors to ensure they are present in the background options
-    backgroundColorScale.push(...this.colorKeys);
+    // Inject modified keycolors to ensure they are present in the background options
+    backgroundColorScale.push(...this._modifiedKeys);
 
     const colorObj = backgroundColorScale
       // Convert to HSLuv and keep track of original indices
