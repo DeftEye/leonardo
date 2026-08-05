@@ -10,21 +10,11 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import * as Sentry from '@sentry/browser';
+// https://developer.mozilla.org/en-US/docs/Web/Media/Formats/Image_types
+const IMAGE_FILE_TYPES = ['image/apng', 'image/bmp', 'image/gif', 'image/jpeg', 'image/pjpeg', 'image/png', 'image/svg+xml', 'image/tiff', 'image/webp', 'image/x-icon'];
 
-const dsn = import.meta.env.VITE_SENTRY_DSN;
-
-if (dsn) {
-  Sentry.init({
-    dsn,
-    environment: import.meta.env.MODE,
-    release: import.meta.env.VITE_APP_VERSION,
-    integrations: [Sentry.browserTracingIntegration()],
-    tracesSampleRate: 1.0,
-    tracePropagationTargets: ['localhost', /^\//],
-    // Expected client-side validation (wrong file type) must not create issues
-    ignoreErrors: ['UnsupportedUploadError']
-  });
+function isSupportedImageFile(file) {
+  return Boolean(file && IMAGE_FILE_TYPES.includes(file.type));
 }
 
-export {Sentry};
+export {IMAGE_FILE_TYPES, isSupportedImageFile};
