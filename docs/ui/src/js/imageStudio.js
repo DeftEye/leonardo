@@ -180,12 +180,11 @@ async function handleFile(file) {
   }
 
   // Allow the picker to select any file (including PDF). Validation catches
-  // unsupported types here and reports them to Sentry.
+  // unsupported types here and reports them to Sentry without surfacing UI copy.
   if (!validFileType(file)) {
     reportUnsupportedUpload(file);
-    const meta = $('imageStudioFileMeta');
-    meta.hidden = false;
-    meta.textContent = `“${file.name}” is not a supported image type (${file.type || 'unknown'}). Error reported.`;
+    const upload = $('imageStudioUpload');
+    if (upload) upload.value = '';
     return;
   }
 
