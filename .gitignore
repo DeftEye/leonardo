@@ -11,3 +11,8 @@ npm-debug.log*
 
 # husky
 .husky/_
+
+# local env (Sentry DSN, etc.)
+.env.local
+.env.*.local
+docs/ui/.env.local
