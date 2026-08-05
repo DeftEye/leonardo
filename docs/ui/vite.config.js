@@ -11,11 +11,13 @@ governing permissions and limitations under the License.
 */
 
 import {resolve, dirname} from 'path';
-import {copyFileSync, mkdirSync, existsSync} from 'fs';
+import {copyFileSync, mkdirSync, existsSync, readFileSync} from 'fs';
 import {fileURLToPath} from 'url';
+import {loadEnv} from 'vite';
 import handlebars from 'vite-plugin-handlebars';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
+const pkg = JSON.parse(readFileSync(resolve(__dirname, 'package.json'), 'utf8'));
 
 /** Copy Spectrum icon SVGs from node_modules to public so they are served and copied to dist. */
 function copySpectrumIcons() {
@@ -38,42 +40,50 @@ function copySpectrumIconsPlugin() {
   };
 }
 
-export default {
-  base: './',
-  root: 'src',
-  // Load .env* from the package root (next to this config), not src/
-  envDir: __dirname,
-  publicDir: '../public',
-  build: {
-    outDir: '../dist',
-    emptyOutDir: true,
-    rollupOptions: {
-      input: {
-        index: resolve(__dirname, 'src/index.html'),
-        api: resolve(__dirname, 'src/api.html'),
-        articles: resolve(__dirname, 'src/articles.html'),
-        aiTools: resolve(__dirname, 'src/ai-tools.html'),
-        theme: resolve(__dirname, 'src/theme.html'),
-        scales: resolve(__dirname, 'src/scales.html'),
-        tools: resolve(__dirname, 'src/tools.html'),
-        demo: resolve(__dirname, 'src/demo.html')
+export default ({mode}) => {
+  const env = loadEnv(mode, __dirname, '');
+  const release = env.VITE_APP_VERSION || `leonardo-ui@${pkg.version}`;
+
+  return {
+    base: './',
+    root: 'src',
+    // Load .env* from the package root (next to this config), not src/
+    envDir: __dirname,
+    define: {
+      'import.meta.env.VITE_APP_VERSION': JSON.stringify(release)
+    },
+    publicDir: '../public',
+    build: {
+      outDir: '../dist',
+      emptyOutDir: true,
+      rollupOptions: {
+        input: {
+          index: resolve(__dirname, 'src/index.html'),
+          api: resolve(__dirname, 'src/api.html'),
+          articles: resolve(__dirname, 'src/articles.html'),
+          aiTools: resolve(__dirname, 'src/ai-tools.html'),
+          theme: resolve(__dirname, 'src/theme.html'),
+          scales: resolve(__dirname, 'src/scales.html'),
+          tools: resolve(__dirname, 'src/tools.html'),
+          demo: resolve(__dirname, 'src/demo.html')
+        }
+      }
+    },
+    plugins: [
+      copySpectrumIconsPlugin(),
+      handlebars({
+        partialDirectory: resolve(__dirname, 'src/views')
+      })
+    ],
+    css: {
+      preprocessorOptions: {
+        scss: {}
+      }
+    },
+    resolve: {
+      alias: {
+        hsluv: resolve(__dirname, 'node_modules/hsluv/dist/hsluv.mjs')
       }
     }
-  },
-  plugins: [
-    copySpectrumIconsPlugin(),
-    handlebars({
-      partialDirectory: resolve(__dirname, 'src/views')
-    })
-  ],
-  css: {
-    preprocessorOptions: {
-      scss: {}
-    }
-  },
-  resolve: {
-    alias: {
-      hsluv: resolve(__dirname, 'node_modules/hsluv/dist/hsluv.mjs')
-    }
-  }
+  };
 };
