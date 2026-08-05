@@ -93,6 +93,9 @@
     "color-contrast-generator"
   ],
   "license": "Apache-2.0",
+  "scripts": {
+    "test": "node --test src/js/imageFileTypes.test.js"
+  },
   "alias": {
     "hsluv": "hsluv/dist/hsluv.mjs"
   },

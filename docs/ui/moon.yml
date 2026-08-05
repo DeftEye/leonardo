@@ -41,3 +41,9 @@ tasks:
     inputs:
       - 'src/**/*.js'
       - eslint.config.js
+  test:
+    command: 'node --test src/js/imageFileTypes.test.js'
+    platform: node
+    inputs:
+      - 'src/js/imageFileTypes.js'
+      - 'src/js/imageFileTypes.test.js'
