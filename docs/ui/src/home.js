@@ -10,6 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+import './instrument';
 import './index.css';
 import {pageLoader} from './js/pageLoader';
 import hljs from 'highlight.js/lib/core';

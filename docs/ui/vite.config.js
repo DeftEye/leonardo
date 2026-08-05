@@ -41,6 +41,8 @@ function copySpectrumIconsPlugin() {
 export default {
   base: './',
   root: 'src',
+  // Load .env* from the package root (next to this config), not src/
+  envDir: __dirname,
   publicDir: '../public',
   build: {
     outDir: '../dist',

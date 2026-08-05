@@ -10,6 +10,7 @@
     "@adobe/leonardo-contrast-colors": "workspace:^",
     "@adobe/spectrum-css-workflow-icons": "^1.0.0",
     "@bjornlu/colorblind": "^1.0.3",
+    "@sentry/browser": "^10.69.0",
     "@spectrum-css/actionbutton": "^1.0.4",
     "@spectrum-css/actiongroup": "^1.0.3",
     "@spectrum-css/alert": "^2.0.5",
