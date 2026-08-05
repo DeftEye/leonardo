@@ -1,0 +1,24 @@
+<header class="spectrum-AppHeader">
+  <div class="spectrum-AppHeader_item">
+    {{> LogoLink }}
+
+    <div class="spectrum-Tabs spectrum-Tabs--horizontal spectrum-Tabs--quiet spectrum-Tabs--fluid">
+      <a href="index.html" class="spectrum-Tabs-item app-Tabs-item" id="tabHome" aria-label="Home">
+        <span class="spectrum-Tabs-itemLabel">
+          <svg xmlns:xlink="http://www.w3.org/1999/xlink" class="spectrum-Icon spectrum-Icon--sizeS" focusable="false" aria-hidden="true" aria-label="Home">
+            <use xlink:href="#spectrum-icon-18-Home" />
+          </svg>
+        </span>
+      </a>
+
+      <div id="tabImageStudio" class="spectrum-Tabs-item app-Tabs-item is-selected" tabindex="0">
+        <label class="spectrum-Tabs-itemLabel">Image Studio</label>
+        <span class="spectrum-Tabs-selectionIndicator" style="width: 100%"></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="spectrum-AppHeader_item">
+    {{> GithubLink }}
+  </div>
+</header>

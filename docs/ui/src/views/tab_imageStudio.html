@@ -1,0 +1,130 @@
+<div id="imageStudio" class="AppTab imageStudio">
+  <aside class="imageStudio-rail spectrum-Typography" aria-label="Image Studio controls">
+    <div class="imageStudio-railHeader">
+      <h2 class="spectrum-Heading spectrum-Heading--sizeM">Image Studio</h2>
+      <p class="spectrum-Body spectrum-Body--sizeS imageStudio-lede">Upload an image, extract a palette, remap colors, and refine with global adjustments.</p>
+    </div>
+
+    <section class="imageStudio-section">
+      <h3 class="spectrum-Heading spectrum-Heading--sizeXS">Image</h3>
+      <div class="imageStudio-actions">
+        <label tabindex="0" for="imageStudioUpload" class="spectrum-Button spectrum-Button--sizeM spectrum-Button--cta">
+          <span class="spectrum-Button-label">Upload image</span>
+        </label>
+        <input id="imageStudioUpload" type="file" accept="image/*" hidden />
+        <button type="button" id="imageStudioClear" class="spectrum-Button spectrum-Button--sizeM spectrum-Button--secondary" disabled>
+          <span class="spectrum-Button-label">Clear</span>
+        </button>
+      </div>
+      <p id="imageStudioFileMeta" class="spectrum-Body spectrum-Body--sizeXS imageStudio-meta" hidden></p>
+    </section>
+
+    <section class="imageStudio-section">
+      <div class="imageStudio-sectionHead">
+        <h3 class="spectrum-Heading spectrum-Heading--sizeXS">Palette</h3>
+        <button type="button" id="imageStudioExtract" class="spectrum-ActionButton spectrum-ActionButton--sizeS" disabled>
+          <span class="spectrum-ActionButton-label">Re-extract</span>
+        </button>
+      </div>
+      <p class="spectrum-Body spectrum-Body--sizeXS imageStudio-hint">Edit a swatch to remap matching colors in the image.</p>
+      <div id="imageStudioSwatches" class="imageStudio-swatches" aria-live="polite"></div>
+    </section>
+
+    <section class="imageStudio-section">
+      <h3 class="spectrum-Heading spectrum-Heading--sizeXS">Remap</h3>
+      <div class="spectrum-Slider imageStudio-slider">
+        <div class="spectrum-Slider-labelContainer">
+          <label class="spectrum-Slider-label" id="imageRemapStrengthLabel" for="imageRemapStrength">Strength</label>
+          <div class="spectrum-Slider-value" role="textbox" aria-readonly="true" aria-labelledby="imageRemapStrengthLabel" id="imageRemapStrengthValue">70%</div>
+        </div>
+        <input class="spectrum-Slider-controls" type="range" min="0" max="100" step="1" value="70" id="imageRemapStrength" name="imageRemapStrength" disabled />
+      </div>
+    </section>
+
+    <section class="imageStudio-section">
+      <div class="imageStudio-sectionHead">
+        <h3 class="spectrum-Heading spectrum-Heading--sizeXS">Adjust</h3>
+        <button type="button" id="imageStudioResetAdjust" class="spectrum-ActionButton spectrum-ActionButton--sizeS" disabled>
+          <span class="spectrum-ActionButton-label">Reset</span>
+        </button>
+      </div>
+
+      <div class="spectrum-Slider imageStudio-slider">
+        <div class="spectrum-Slider-labelContainer">
+          <label class="spectrum-Slider-label" id="imageHueLabel" for="imageHue">Hue</label>
+          <div class="spectrum-Slider-value" role="textbox" aria-readonly="true" aria-labelledby="imageHueLabel" id="imageHueValue">0°</div>
+        </div>
+        <input class="spectrum-Slider-controls" type="range" min="-180" max="180" step="1" value="0" id="imageHue" name="imageHue" disabled />
+      </div>
+
+      <div class="spectrum-Slider imageStudio-slider">
+        <div class="spectrum-Slider-labelContainer">
+          <label class="spectrum-Slider-label" id="imageSaturationLabel" for="imageSaturation">Saturation</label>
+          <div class="spectrum-Slider-value" role="textbox" aria-readonly="true" aria-labelledby="imageSaturationLabel" id="imageSaturationValue">0%</div>
+        </div>
+        <input class="spectrum-Slider-controls" type="range" min="-100" max="100" step="1" value="0" id="imageSaturation" name="imageSaturation" disabled />
+      </div>
+
+      <div class="spectrum-Slider imageStudio-slider">
+        <div class="spectrum-Slider-labelContainer">
+          <label class="spectrum-Slider-label" id="imageBrightnessLabel" for="imageBrightness">Brightness</label>
+          <div class="spectrum-Slider-value" role="textbox" aria-readonly="true" aria-labelledby="imageBrightnessLabel" id="imageBrightnessValue">0%</div>
+        </div>
+        <input class="spectrum-Slider-controls" type="range" min="-100" max="100" step="1" value="0" id="imageBrightness" name="imageBrightness" disabled />
+      </div>
+
+      <div class="spectrum-Slider imageStudio-slider">
+        <div class="spectrum-Slider-labelContainer">
+          <label class="spectrum-Slider-label" id="imageContrastLabel" for="imageContrast">Contrast</label>
+          <div class="spectrum-Slider-value" role="textbox" aria-readonly="true" aria-labelledby="imageContrastLabel" id="imageContrastValue">0%</div>
+        </div>
+        <input class="spectrum-Slider-controls" type="range" min="-100" max="100" step="1" value="0" id="imageContrast" name="imageContrast" disabled />
+      </div>
+    </section>
+
+    <section class="imageStudio-section imageStudio-section--actions">
+      <div class="imageStudio-actions imageStudio-actions--stack">
+        <button type="button" id="imageStudioBeforeAfter" class="spectrum-Button spectrum-Button--sizeM spectrum-Button--secondary" disabled aria-pressed="false">
+          <span class="spectrum-Button-label">Hold to compare</span>
+        </button>
+        <button type="button" id="imageStudioDownload" class="spectrum-Button spectrum-Button--sizeM spectrum-Button--cta" disabled>
+          <span class="spectrum-Button-label">Download PNG</span>
+        </button>
+      </div>
+    </section>
+  </aside>
+
+  <main class="imageStudio-stage" id="imageStudioStage">
+    <div id="imageStudioDropzone" class="imageStudio-dropzone">
+      <div class="imageStudio-dropzoneInner">
+        <p class="spectrum-Heading spectrum-Heading--sizeL">Drop an image to recolor</p>
+        <p class="spectrum-Body spectrum-Body--sizeM">PNG, JPEG, WebP, or GIF — palette remapping and live adjustments</p>
+        <label for="imageStudioUpload" class="spectrum-Button spectrum-Button--sizeL spectrum-Button--primary">
+          <span class="spectrum-Button-label">Choose image</span>
+        </label>
+      </div>
+    </div>
+
+    <div id="imageStudioCanvasWrap" class="imageStudio-canvasWrap" hidden>
+      <canvas id="imageStudioCanvas" aria-label="Recolored image preview"></canvas>
+      <div id="imageStudioProcessing" class="imageStudio-processing" hidden>
+        <div class="spectrum-ProgressCircle spectrum-ProgressCircle--indeterminate spectrum-ProgressCircle--small">
+          <div class="spectrum-ProgressCircle-track"></div>
+          <div class="spectrum-ProgressCircle-fills">
+            <div class="spectrum-ProgressCircle-fillMask1">
+              <div class="spectrum-ProgressCircle-fillSubMask1">
+                <div class="spectrum-ProgressCircle-fill"></div>
+              </div>
+            </div>
+            <div class="spectrum-ProgressCircle-fillMask2">
+              <div class="spectrum-ProgressCircle-fillSubMask2">
+                <div class="spectrum-ProgressCircle-fill"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <span class="spectrum-Body spectrum-Body--sizeS">Updating preview…</span>
+      </div>
+    </div>
+  </main>
+</div>

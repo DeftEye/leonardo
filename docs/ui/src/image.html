@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html dir="ltr">
+  <head>
+    {{> htmlHead }}
+  </head>
+
+  <body class="spectrum spectrum--medium spectrum--light appFrame">
+    <div id="pageLoader">
+      <div class="spectrum-ProgressCircle spectrum-ProgressCircle--indeterminate spectrum-ProgressCircle--large">
+        <div class="spectrum-ProgressCircle-track"></div>
+        <div class="spectrum-ProgressCircle-fills">
+          <div class="spectrum-ProgressCircle-fillMask1">
+            <div class="spectrum-ProgressCircle-fillSubMask1">
+              <div class="spectrum-ProgressCircle-fill"></div>
+            </div>
+          </div>
+          <div class="spectrum-ProgressCircle-fillMask2">
+            <div class="spectrum-ProgressCircle-fillSubMask2">
+              <div class="spectrum-ProgressCircle-fill"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="page" style="opacity: 0">
+      {{> header_image }}
+      {{> tab_imageStudio }}
+    </div>
+
+    <script src="image.js" type="module"></script>
+  </body>
+</html>
