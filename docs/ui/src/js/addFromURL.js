@@ -10,6 +10,7 @@ governing permissions and limitations under the License.
 */
 
 import {addColorScaleUpdate} from './colorScale';
+import {getRandomColorName} from './predefinedColorNames';
 import {sanitizeQueryString} from './utils';
 
 function addFromURLDialog() {
@@ -38,7 +39,7 @@ function addFromURL() {
   let pathName = url.pathname;
 
   let crs, ratios, mode;
-  let cName = predefinedColorNames[Math.floor(Math.random() * predefinedColorNames.length)];
+  let cName = getRandomColorName();
 
   // // If parameters exist, use parameter; else use default html input values
   if (params.has('colorKeys')) {
